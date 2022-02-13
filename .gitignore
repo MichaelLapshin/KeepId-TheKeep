@@ -1,4 +1,18 @@
 # Ignore VSCode folders and files
 *.devcontainer/
 *.vscode/
-*.out
+
+# Ignore compiled code
+**/build
+**/build/*
+**/out
+**/out/*
+**.out
+**.a
+
+# Ignore CMake-generated files
+**/CMakeFiles
+**/CMakeFiles/*
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/Makefile
