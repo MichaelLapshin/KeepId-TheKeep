@@ -17,13 +17,14 @@ pair<string, string> CryptoWrapper_Cryptopp::generateRSAKeyPair() const {
     AutoSeededRandomPool random_gen;
 
     // Creates public/private keys
-    InvertibleRSAFunction params;
-    params.GenerateRandomWithKeySize(random_gen, kNumKeyBitSize);
+    RSA::PrivateKey private_key;
+    private_key.GenerateRandomWithKeySize(random_gen, kNumKeyBitSize);
+    RSA::PublicKey public_key(private_key);
 
-    // Transformas the object keys into strings
+    // Transforms the object keys into strings
     string str_publ_key, str_priv_key;
-    params.DEREncodePublicKey(StringSink(str_publ_key).Ref());
-    params.DEREncodePrivateKey(StringSink(str_priv_key).Ref());
+    public_key.DEREncode(StringSink(str_publ_key).Ref());
+    private_key.DEREncode(StringSink(str_priv_key).Ref());
 
     return pair<string, string>(str_publ_key, str_priv_key);
 }
@@ -31,11 +32,11 @@ pair<string, string> CryptoWrapper_Cryptopp::generateRSAKeyPair() const {
 /**
  * CryptoWrapper_Cryptopp::encryptRSAMessage()
  */
-string CryptoWrapper_Cryptopp::encryptRSAMessage(string str_publ_key, string message) const {
+string CryptoWrapper_Cryptopp::encryptRSAMessage(string message, string str_publ_key) const {
     // Obtains library-compatible public key object
     RSA::PublicKey public_key;
     StringSource ss_publ_key(str_publ_key, true);
-    public_key.Load(ss_publ_key);
+    public_key.BERDecode(ss_publ_key);
 
     // Create random generator
     AutoSeededRandomPool random_gen;
@@ -57,11 +58,11 @@ string CryptoWrapper_Cryptopp::encryptRSAMessage(string str_publ_key, string mes
 /**
  * CryptoWrapper_Cryptopp::decryptRSAMessage()
  */
-string CryptoWrapper_Cryptopp::decryptRSAMessage(string str_priv_key, string message) const {
+string CryptoWrapper_Cryptopp::decryptRSAMessage(string message, string str_priv_key) const {
     // Obtains library-compatible private key object
     RSA::PrivateKey private_key;
     StringSource ss_priv_key(str_priv_key, true);
-    private_key.Load(ss_priv_key);
+    private_key.BERDecode(ss_priv_key);
 
     // Create random generator
     AutoSeededRandomPool random_gen;

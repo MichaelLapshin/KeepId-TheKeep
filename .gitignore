@@ -4,7 +4,7 @@
 
 # Ignore compiled code
 **/build
-**/build/*
+**/build/**
 **/out
 **/out/*
 **.out
@@ -16,3 +16,6 @@
 **/CMakeCache.txt
 **/cmake_install.cmake
 **/Makefile
+
+# Ignore program data
+**.dat

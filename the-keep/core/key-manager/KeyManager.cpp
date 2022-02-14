@@ -45,16 +45,16 @@ void KeyManager::initialize(CryptoWrapper *wrapper){
  * KeyManager::getPublicKey()
  */
 string KeyManager::getPublicKey(){
-    return public_key_;
+    return KeyManager::public_key_;
 }
 
 /**
  * KeyManager::encryptMessage()
  */
 string KeyManager::encryptMessage(string message, string str_publ_key){
-    return KeyManager::crypto_wrapper_->encryptRSAMessage(
-                str_publ_key, 
-                message
+    return KeyManager::crypto_wrapper_->encryptRSAMessage( 
+                message,
+                str_publ_key
             );
 }
 
@@ -63,8 +63,8 @@ string KeyManager::encryptMessage(string message, string str_publ_key){
  */
 string KeyManager::decryptMessage(string message, string str_priv_key){
     return KeyManager::crypto_wrapper_->decryptRSAMessage(
-                KeyManager::private_key_, 
-                message
+                message,
+                str_priv_key
             );
 }
 
@@ -80,22 +80,24 @@ void KeyManager::generateKeyPair(){
 /**
  * KeyManager::areKeysInStrage()
  */
-bool KeyManager::areKeysInStorage(){
-    return filesystem::exists(KeyManager::kPublicKeyFile)
-        && filesystem::exists(KeyManager::kPrivateKeyFile);
+bool KeyManager::areKeysInStorage(string public_key_file_name, 
+                                  string private_key_file_name){
+    return filesystem::exists(public_key_file_name)
+        && filesystem::exists(private_key_file_name);
 }
 
 /**
  * KeyManager::writeKeysToStorage()
  */
-void KeyManager::writeKeysToStorage(){
+void KeyManager::writeKeysToStorage(string public_key_file_name, 
+                                    string private_key_file_name){
     // Saves public key
-    std::ofstream public_key_file {KeyManager::kPublicKeyFile};
+    std::ofstream public_key_file {public_key_file_name};
     public_key_file << KeyManager::public_key_;
     public_key_file.close();
 
     // Saves private key
-    std::ofstream private_key_file {KeyManager::kPrivateKeyFile};
+    std::ofstream private_key_file {private_key_file_name};
     private_key_file << KeyManager::private_key_;
     private_key_file.close();
 }
@@ -103,15 +105,22 @@ void KeyManager::writeKeysToStorage(){
 /**
  * KeyManager::readKeysFromStorage()
  */
-void KeyManager::readKeysFromStorage(){
+void KeyManager::readKeysFromStorage(string public_key_file_name, 
+                                     string private_key_file_name){
     // Read public key
-    ifstream public_key_file {KeyManager::kPublicKeyFile};
-    getline(public_key_file, KeyManager::public_key_);
+    ifstream public_key_file {public_key_file_name};
+    KeyManager::public_key_.assign(
+            std::istreambuf_iterator<char>(public_key_file),
+            std::istreambuf_iterator<char>());
     public_key_file.close();
 
+    
+
     // Read private key
-    ifstream private_key_file {KeyManager::kPrivateKeyFile};
-    getline(private_key_file, KeyManager::private_key_);
+    ifstream private_key_file {private_key_file_name};
+    KeyManager::private_key_.assign(
+            std::istreambuf_iterator<char>(private_key_file),
+            std::istreambuf_iterator<char>());
     private_key_file.close();
 }
 

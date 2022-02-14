@@ -24,7 +24,9 @@ class KeyManager {
 
         /**
          * KeyManager::getPublicKey()
-         * @brief A simple getter for retrieving the generator's  
+         * @brief A simple getter for retrieving the public key.
+         * 
+         * @return The public key in DER format
          */
         static string getPublicKey();
 
@@ -55,14 +57,16 @@ class KeyManager {
          * @brief Attempts to identify the public and private key within
          *          the predefined key storage location.
          */
-        static bool areKeysInStorage();
+        static bool areKeysInStorage(string public_key_file_name = KeyManager::kPublicKeyFile, 
+                                     string private_key_file_name = KeyManager::kPrivateKeyFile);
 
         /**
          * KeyManager::writeKeysToStorage()
          * @brief Uses the keys stored as private variables and writes
          *          them into the predefined storage location.
          */
-        static void writeKeysToStorage();
+        static void writeKeysToStorage(string public_key_file_name = KeyManager::kPublicKeyFile, 
+                                       string private_key_file_name = KeyManager::kPrivateKeyFile);
 
         /**
          * KeyManager::readKeysFromStorage()
@@ -70,13 +74,14 @@ class KeyManager {
          *          and write the keys into the private variables.
          * @return A public and private key in the form of a pair (private, public).
          */
-        static void readKeysFromStorage();
+        static void readKeysFromStorage(string public_key_file_name = KeyManager::kPublicKeyFile, 
+                                        string private_key_file_name = KeyManager::kPrivateKeyFile);
 
         // File constants
-        inline static const string kPublicKeyFile = "KeepPublicKey.txt";
-        inline static const string kPrivateKeyFile = "KeepPrivateKey.txt";
+        inline static const string kPublicKeyFile = "KeepPublicKey.dat";
+        inline static const string kPrivateKeyFile = "KeepPrivateKey.dat";
 
-        // RSA key pair variables
+        // RSA key pair variables in DER format
         inline static string public_key_ = "";
         inline static string private_key_ = "";
 

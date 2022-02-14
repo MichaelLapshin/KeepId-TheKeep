@@ -10,31 +10,27 @@ using namespace std;
 void startWorkerLoop();
 
 int main(){
-    cout << "Hello the Keep!" << endl;
-
     startWorkerLoop();
-
     return 0;
 }
 
 void startWorkerLoop(){
     // Creates cryptography wrapper object
     CryptoWrapper_Cryptopp wrapper;
-    
-    cout << "YEsssS" << endl;
-    
+        
     // Sets the cryptography library wrapper
     KeyManager::initialize(&wrapper);
-    cout << "Initialized." << endl;
 
-    string raw_msg = "Hello world!";
+    cout << "Public Key: " << endl;
+    cout << KeyManager::getPublicKey() << endl;
+    string raw_msg = "Hello world! This is a raw message.";
     string encoded = KeyManager::encryptMessage(raw_msg); 
-    cout << "Done encrypting" << endl;
     string decoded = KeyManager::decryptMessage(encoded); 
 
-    cout << raw_msg << endl;
-    cout << encoded << endl;
-    cout << decoded << endl;
+    cout << endl << "=== RESULT === " << endl;
+    cout << "Original message: " << raw_msg << endl;
+    cout << "Encoded message: " << encoded << endl;
+    cout << "Decoded message: " << decoded << endl;
 
     // Creates and starts the worker
     // TaskWorker worker {};
