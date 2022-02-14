@@ -1,17 +1,17 @@
 # Add KeyManager
-add_library(KeyManager
+add_library(KeyManager STATIC
     key-manager/KeyManager.cpp
-    key-manager/KeyManager.hpp
+    # key-manager/KeyManager.hpp
 )
 
 message("Added KeyManager library.")
 
 # Add CryptoWrappers
-add_library(CryptoWrappers 
+add_library(CryptoWrappers STATIC
     cryptography-wrappers/CryptoWrapper_Cryptopp.cpp
 
-    cryptography-wrappers/CryptoWrapper_Cryptopp.hpp
-    cryptography-wrappers/CryptoWrapper.hpp
+    # cryptography-wrappers/CryptoWrapper_Cryptopp.hpp
+    # cryptography-wrappers/CryptoWrapper.hpp
 )
 
 # Message

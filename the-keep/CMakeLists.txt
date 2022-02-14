@@ -32,7 +32,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 add_executable(${PROJECT_NAME}UnitTests tests/test_main.cpp)
 
 ### Main subdirectories to include ###
-add_subdirectory(comms)
+# add_subdirectory(comms)
 add_subdirectory(core)
 add_subdirectory(tests)
 
@@ -51,7 +51,6 @@ target_link_libraries(${PROJECT_NAME}
   KeyManager
 )
 
-
 # Adds targets
 target_link_libraries(${PROJECT_NAME}UnitTests
   crypto++
@@ -61,3 +60,5 @@ target_link_libraries(${PROJECT_NAME}UnitTests
   pthread
   KeepUnitTests
 )
+
+enable_testing()

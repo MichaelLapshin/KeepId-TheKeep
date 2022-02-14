@@ -80,24 +80,22 @@ void KeyManager::generateKeyPair(){
 /**
  * KeyManager::areKeysInStrage()
  */
-bool KeyManager::areKeysInStorage(string public_key_file_name, 
-                                  string private_key_file_name){
-    return filesystem::exists(public_key_file_name)
-        && filesystem::exists(private_key_file_name);
+bool KeyManager::areKeysInStorage(){
+    return filesystem::exists(KeyManager::kPublicKeyFile)
+        && filesystem::exists(KeyManager::kPrivateKeyFile);
 }
 
 /**
  * KeyManager::writeKeysToStorage()
  */
-void KeyManager::writeKeysToStorage(string public_key_file_name, 
-                                    string private_key_file_name){
+void KeyManager::writeKeysToStorage(){
     // Saves public key
-    std::ofstream public_key_file {public_key_file_name};
+    ofstream public_key_file {KeyManager::kPublicKeyFile};
     public_key_file << KeyManager::public_key_;
     public_key_file.close();
 
     // Saves private key
-    std::ofstream private_key_file {private_key_file_name};
+    ofstream private_key_file {KeyManager::kPrivateKeyFile};
     private_key_file << KeyManager::private_key_;
     private_key_file.close();
 }
@@ -105,22 +103,21 @@ void KeyManager::writeKeysToStorage(string public_key_file_name,
 /**
  * KeyManager::readKeysFromStorage()
  */
-void KeyManager::readKeysFromStorage(string public_key_file_name, 
-                                     string private_key_file_name){
+void KeyManager::readKeysFromStorage(){
     // Read public key
-    ifstream public_key_file {public_key_file_name};
+    ifstream public_key_file {KeyManager::kPublicKeyFile};
     KeyManager::public_key_.assign(
-            std::istreambuf_iterator<char>(public_key_file),
-            std::istreambuf_iterator<char>());
+            istreambuf_iterator<char>(public_key_file),
+            istreambuf_iterator<char>());
     public_key_file.close();
 
     
 
     // Read private key
-    ifstream private_key_file {private_key_file_name};
+    ifstream private_key_file {KeyManager::kPrivateKeyFile};
     KeyManager::private_key_.assign(
-            std::istreambuf_iterator<char>(private_key_file),
-            std::istreambuf_iterator<char>());
+            istreambuf_iterator<char>(private_key_file),
+            istreambuf_iterator<char>());
     private_key_file.close();
 }
 

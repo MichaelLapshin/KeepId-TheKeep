@@ -57,16 +57,14 @@ class KeyManager {
          * @brief Attempts to identify the public and private key within
          *          the predefined key storage location.
          */
-        static bool areKeysInStorage(string public_key_file_name = KeyManager::kPublicKeyFile, 
-                                     string private_key_file_name = KeyManager::kPrivateKeyFile);
+        static bool areKeysInStorage();
 
         /**
          * KeyManager::writeKeysToStorage()
          * @brief Uses the keys stored as private variables and writes
          *          them into the predefined storage location.
          */
-        static void writeKeysToStorage(string public_key_file_name = KeyManager::kPublicKeyFile, 
-                                       string private_key_file_name = KeyManager::kPrivateKeyFile);
+        static void writeKeysToStorage();
 
         /**
          * KeyManager::readKeysFromStorage()
@@ -74,8 +72,7 @@ class KeyManager {
          *          and write the keys into the private variables.
          * @return A public and private key in the form of a pair (private, public).
          */
-        static void readKeysFromStorage(string public_key_file_name = KeyManager::kPublicKeyFile, 
-                                        string private_key_file_name = KeyManager::kPrivateKeyFile);
+        static void readKeysFromStorage();
 
         // File constants
         inline static const string kPublicKeyFile = "KeepPublicKey.dat";
