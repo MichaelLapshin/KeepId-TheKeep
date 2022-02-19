@@ -1,38 +1,49 @@
 
+#include <string>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 #include "core/key-manager/KeyManager.hpp"
 #include "core/cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
+#include "core/task-manager/TaskManager.hpp"
 
 using namespace std;
 
-void startWorkerLoop();
-
-int main(){
-    startWorkerLoop();
-    return 0;
-}
-
-void startWorkerLoop(){
-    // Creates cryptography wrapper object
+int main(int argc, char *argv[]){
+    // Initializes the critical components of the Keep
     CryptoWrapper_Cryptopp wrapper;
-        
-    // Sets the cryptography library wrapper
     KeyManager::initialize(&wrapper);
+    TaskManager worker{};
 
-    cout << "Public Key: " << endl;
-    cout << KeyManager::getPublicKey() << endl;
-    string raw_msg = "Hello world! This is a raw message.";
-    string encoded = KeyManager::encryptMessage(raw_msg); 
-    string decoded = KeyManager::decryptMessage(encoded); 
+    // Starts the command line interface
+    bool is_running = true;
+    while(is_running){
+        // Parses the a
+        string input; 
+        cin >> input;
 
-    cout << endl << "=== RESULT === " << endl;
-    cout << "Original message: " << raw_msg << endl;
-    cout << "Encoded message: " << encoded << endl;
-    cout << "Decoded message: " << decoded << endl;
+        // Processes the input
+        if(input == "--help"){
+            cout << "--help   : Display help message." << endl;
+            cout << "--start  : Start the Keep." << endl;
+            cout << "--stop   : Stop the Keep." << endl;
+            cout << "--exit   : Exit the program." << endl;
+        }else if(input == "--start"){
+            worker.start();
+        }else if(input == "--stop"){
+            worker.stop();
+        }else if(input == "--exit"){
+            if (!worker.isRunning()){
+                is_running = false;
+            }else{
+                cerr << "The Keep must be stopped. Enter 'stop' to stop the Keep." << endl;
+            }
+        }else{
+            cerr << "Invalid command. Enter '--help' for command instructions." << endl;
+        }
+    }
 
-    // Creates and starts the worker
-    // TaskWorker worker {};
-    // worker.startLoop();
+    cout << "Exiting the program..." << endl;
+    return 0;
 }
