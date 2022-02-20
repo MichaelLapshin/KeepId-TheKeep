@@ -1,5 +1,5 @@
 /**
- * @filename: TaskManager.cpp
+ * @filename: TaskManager.hpp
  * @description: Declaration of the Task Manager in charge of fetching 
  *               and executing the Keep' tasks.
  * @author: KeepId 
