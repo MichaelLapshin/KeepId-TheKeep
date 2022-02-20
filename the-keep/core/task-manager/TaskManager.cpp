@@ -67,35 +67,37 @@ bool TaskManager::isRunning(){
  */
 void TaskManager::workLoop(atomic<SharedResources> &sr){
     while(sr.load().loop_thread){
-        // Poll and execute user-data updating
+        /////////////////////////////////////////////
+        ///  Poll and execute user-data updating  ///
+        /////////////////////////////////////////////
         // Json::Value data_update_json; // = MessageClient.PollFetchDataUpdate()
         
         // 
 
-        // Poll and execute data-request
+        /////////////////////////////////////////////
+        ///     Poll and execute data-request     ///
+        /////////////////////////////////////////////
         Json::Value data_request_input; // = MessageClient.PollFetchDataRequest() // Contains user_id, request_id, private_keys
-        
+        Assertions::assertValidDataRequest(data_request_input);
 
         // Fetch encrypted user data
         vector<string> data_fields = data_request_input.getMemberNames();
-        vector<string> encrytped_data; // = MessageClient.FecthKeepData(user_id, data_fields);
-        
-        // Assertions
-        assert(encrytped_data.size() == data_fields.size());
-        
-        // Fecth private keys from JSON
-        Json::Value private_keys = Json.;
-        
+        Json::Value encrytped_data; // = MessageClient.FecthKeepData(user_id, data_fields);
+        Json::Value private_keys = data_request_input[PRIVATE_KEYS];
 
         // Decrypt user data
-        vector<string> decrypted_data(data_fields.size());
-        Json::Value data_request_output
-        for(int i = 0; i < decrypted_data.size(); i++){
-            decrypted_data[i] = KeyManager::decryptMessage(, );
+        Json::Value decrypted_data;
+        for(string field : data_fields){
+            decrypted_data.append(KeyManager::decryptMessage(encrytped_data[field].asString(),
+                                                             private_keys[field].asString()));
         }
 
-        assert() 
-        Json::Value decrypted_data;
+        // Validates the decrypted data
 
+        // Reencrypts the data
+
+        // Encrypts the data with the company's key
+
+        // Forwards the company encrypted data
     }
 }
