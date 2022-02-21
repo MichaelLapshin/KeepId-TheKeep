@@ -21,23 +21,24 @@ using namespace std;
  * KeyManager::initialize()
  */
 void KeyManager::initialize(CryptoWrapper *wrapper){
-    if (!KeyManager::initialized_){
-        // House-keeping procedure
-        KeyManager::crypto_wrapper_ = wrapper;
-        KeyManager::initialized_ = true;
+    if (KeyManager::initialized_){
+        throw runtime_error("Attempted to initialize the Key Manager a second time.");
+    }
 
-        if (areKeysInStorage()){
-            // Reads keys from the files
-            readKeysFromStorage();
-        }else{
-            // Generates and stores the keys
-            generateKeyPair();
-            writeKeysToStorage();
-        }
+    // House-keeping procedure
+    KeyManager::crypto_wrapper_ = wrapper;
+    KeyManager::initialized_ = true;
 
+    if (areKeysInStorage()){
+        // Reads keys from the files
+        readKeysFromStorage();
     }else{
-        throw runtime_error(
-            "Attempted to initialize the Key Manager a second time.");
+        // Generates and stores the keys
+        pair<string, string> key_pair = generateKeyPair();
+        KeyManager::public_key_ = key_pair.first;
+        KeyManager::private_key_ = key_pair.second;
+
+        writeKeysToStorage();
     }
 }
 
@@ -71,10 +72,12 @@ string KeyManager::decryptMessage(string message, string str_priv_key){
 /**
  * KeyManager::generateKeyPair()
  */
-void KeyManager::generateKeyPair(){
-    pair<string, string> key_pair = KeyManager::crypto_wrapper_->generateRSAKeyPair();
-    KeyManager::public_key_ = key_pair.first;
-    KeyManager::private_key_ = key_pair.second;
+pair<string, string> KeyManager::generateKeyPair(){
+    if (!KeyManager::initialize){
+        throw runtime_error("The KeyManager was not initilaized.");
+    }
+
+    return KeyManager::crypto_wrapper_->generateRSAKeyPair();
 }
 
 /**
