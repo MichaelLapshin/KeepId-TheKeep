@@ -103,9 +103,14 @@ void TaskManager::userDataRequestTask(Json::Value data_request_input){
 
         const string &user_id = data_request_input[USER_ID].asString();
         const string &request_id = data_request_input[REQUEST_ID].asString();
-        const Json::Value &private_keys = data_request_input[PRIVATE_KEYS];
-        const Json::Value &public_keys = data_request_input[PUBLIC_KEYS];
         
+        // Decrypts the given public and private keys using the Keep's private key
+        Json::Value public_keys, private_keys;
+        for(const string &field : data_fields){
+            public_keys[field] = KeyManager::decryptMessage(data_request_input[PUBLIC_KEYS].asString());
+            private_keys[field] = KeyManager::decryptMessage(data_request_input[PRIVATE_KEYS].asString());
+        }
+
         // Fetch encrypted user data
         const Json::Value encrytped_data; // = HolyCow.fecthKeepUserData(user_id, data_fields);
 
