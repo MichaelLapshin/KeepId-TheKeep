@@ -12,8 +12,8 @@
  * getIndexOfString()
  * @brief Finds the index of a string within a vector of strings. 
  * 
- * @param[in] list The vector of strings.
- * @param[in] search The string to find in the vector.
+ * @param list The vector of strings.
+ * @param search The string to find in the vector.
  * 
  * @return The index at which the string was found in the vector, or -1 if none was found.
  */

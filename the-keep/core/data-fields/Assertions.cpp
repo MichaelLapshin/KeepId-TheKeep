@@ -20,9 +20,22 @@
 using namespace std;
 
 /**
+ * Assertions::assertValidDataFields()
+ */
+void Assertions::assertValidDataFields(const vector<string> &data_fields){
+    vector<string> valid_data_fields = Config::getConstraints().getMemberNames();
+
+    for (const string &member : data_fields){
+        if (findVectorString(valid_data_fields, member) == -1)
+            throw runtime_error("The data field '" + member + "' is not valid.");
+    }
+}
+
+
+/**
  * Assertions::assertDataFieldConfig()
  */
-void Assertions::assertDataFieldConfig(Json::Value& data_field_config){
+void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
     // Asserts the options list
     if (!data_field_config.isMember(OPTIONS_LIST) || !data_field_config[OPTIONS_LIST].isObject())
         throw runtime_error("The options list member is missing in the configuration file.");
@@ -39,7 +52,7 @@ void Assertions::assertDataFieldConfig(Json::Value& data_field_config){
         throw runtime_error("The constraints member is missing in the configuration file.");
     
     Json::Value constraints = data_field_config[CONSTRAINTS];
-    for(string member : constraints.getMemberNames()){
+    for(const string &member : constraints.getMemberNames()){
         if (!constraints[member].isObject())
             throw runtime_error("The data field configuration member '" + member + "' is not a Json object.");
         
@@ -71,10 +84,19 @@ void Assertions::assertDataFieldConfig(Json::Value& data_field_config){
     }
 }
 
+
+/**
+ * Assertions::assertValidDataUpdate()
+ */
+void Assertions::assertValidDataUpdate(const Json::Value& data_update_input){
+    // TODO
+}
+
+
 /**
  * Assertions::assertValidDataRequest()
  */
-void Assertions::assertValidDataRequest(Json::Value& data_request_input){
+void Assertions::assertValidDataRequest(const Json::Value &data_request_input){
     // Checks that the basic members exist
     if (!data_request_input.isMember(USER_ID) || !data_request_input[USER_ID].isString())
         throw runtime_error("Data request is missing the user id.");
@@ -85,17 +107,39 @@ void Assertions::assertValidDataRequest(Json::Value& data_request_input){
     if (!data_request_input.isMember(PRIVATE_KEYS) || !data_request_input[PRIVATE_KEYS].isObject())
         throw runtime_error("Data request is missing the private keys.");
     
+    if (!data_request_input.isMember(PUBLIC_KEYS) || !data_request_input[PUBLIC_KEYS].isObject())
+        throw runtime_error("Data request is missing the public keys.");
+
     // Asserts the input data field configuration constraints
     Json::Value private_keys = data_request_input[PRIVATE_KEYS];
     if (private_keys.empty()) throw runtime_error("The private keys member is empty.");    
 
-    for (string member : private_keys.getMemberNames()){
-        vector<string> valid_data_fields = Config::getConstraints().getMemberNames();
-        if (findVectorString(valid_data_fields, constraints[member][OPTIONS].asString()) == -1)
-            throw runtime_error("Private key data field '" + member + "' is not valid.");
+    Assertions::assertValidDataFields(private_keys.getMemberNames());
 
+    for (const string &member : private_keys.getMemberNames()){
         if (!private_keys[member].isString())
-            throw runtime_error("Data request private key for data field'" + member + "' is not a string.")
-    
+            throw runtime_error("Data request private key for data field'" + member + "' is not a string.");
+    }
+
+    // Asserts the input data field configuration constraints
+    Json::Value public_keys = data_request_input[PUBLIC_KEYS];
+    if (public_keys.empty()) throw runtime_error("The public keys member is empty.");    
+
+    Assertions::assertValidDataFields(public_keys.getMemberNames());
+
+    for (const string &member : public_keys.getMemberNames()){
+        if (!public_keys[member].isString())
+            throw runtime_error("Data request public key for data field'" + member + "' is not a string.");
+    }
+
+    // Asserts that both private keys and public keys are for the same fields
+    for (const string &priv_key : private_keys.getMemberNames()){
+        if (findVectorString(public_keys.getMemberNames(), priv_key) == -1)
+            throw runtime_error("The private key data field '" + priv_key + "' cannot be matched any public key.");
+    }
+
+     for (const string &publ_key : public_keys.getMemberNames()){
+        if (findVectorString(private_keys.getMemberNames(), publ_key) == -1)
+            throw runtime_error("The public key data field '" + publ_key + "' cannot be matched any private key.");
     }
 }

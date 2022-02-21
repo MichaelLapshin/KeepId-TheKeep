@@ -23,6 +23,14 @@ class KeyManager {
         static void initialize(CryptoWrapper *wrapper);
 
         /**
+         * KeyManager::generateKeyPair()
+         * @brief Using crypto-libraries, generates an 2048-bit asymmetric key pair.
+         * 
+         * @return Returns a pair of asymmetric cryptographic keys. pair<str_public_key, str_private_key>
+         */
+        static pair<string, string> generateKeyPair();
+
+        /**
          * KeyManager::getPublicKey()
          * @brief A simple getter for retrieving the public key.
          * 
@@ -45,13 +53,6 @@ class KeyManager {
         static string decryptMessage(string message, string str_priv_key = KeyManager::private_key_);
     protected:
     private:
-        /**
-         * KeyManager::generateKeyPair()
-         * @brief Using crypto-libraries, generates an 2048-bit asymmetric key pair.
-         * @return Returns a pair of asymmetric cryptographic keys.
-         */
-        static void generateKeyPair();
-
         /**
          * KeyManager::areKeysInStorage()
          * @brief Attempts to identify the public and private key within

@@ -16,10 +16,14 @@ const std::string DATA_FIELD_CONFIG_FILE_NAME = "data-fields-config.json";
 const std::string OPTIONS_LIST = "options_list";
 const std::string CONSTRAINTS = "constraints";
 
-// Data fields
+// Data transmission constants
+const std::string ENCRYPTED_DATA_FIELDS = "encrypted_data_fields";
+
+// Data field constants
 const std::string USER_ID = "user_id";
 const std::string REQUEST_ID = "request_id";
 const std::string PRIVATE_KEYS = "private_keys";
+const std::string PUBLIC_KEYS = "public_keys";
 
 const std::string INPUT_TYPE = "input_type"; 
 const std::string MAX_CHARS = "max_chars";

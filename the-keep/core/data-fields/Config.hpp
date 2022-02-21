@@ -5,6 +5,9 @@
  * @date: February 19, 2022
  */
 
+#include <string>
+#include <vector>
+
 #include <jsoncpp/json/json.h>
 
 using namespace std;
@@ -26,6 +29,16 @@ class Config{
          */
         static void deinitialize();
         
+        /**
+         * Config::validateDataFields()
+         * @brief Validates that the data fields comply with the configuration constraints.
+         * 
+         * @param data_fields The data fields Json obejct to validate
+         * 
+         * @return A list of data fields that are considered to be invalid.
+         */
+        static vector<string> validateDataFields(const Json::Value &data_fields);
+
         /**
          * Config::getOptionsList()
          * @brief A getter for the configuration options list.
