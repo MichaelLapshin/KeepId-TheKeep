@@ -51,9 +51,12 @@ void Config::initialize(){
 }
 
 /**
- * Config::validateDataFields()
+ * Config::validateDecryptedDataFields()
  */
-vector<string> Config::validateDataFields(const Json::Value &data_fields){
+vector<string> Config::validateDecryptedDataFields(const Json::Value &data_fields){
+    Assertions::assertValidDataFields(data_fields.getMemberNames());
+
+    // Accumulates the invalid fields
     const vector<string> invalid_fields;
 
     Json::Value options_list = Config::getOptionsList();
@@ -62,21 +65,44 @@ vector<string> Config::validateDataFields(const Json::Value &data_fields){
     for (const string field : data_field.getMemberNames()){
         // Options list check
         if (constraints[field][INPUT_TYPE].asString() == OPTIONS){
-            
-            // Checks that data_field is one of the options
-            assert(findVectorString(options_list[]., data_fields[field]) != -1);
+            string options = constraints[field][OPTIONS];
 
-            assert();
+            // Check if the option is within the options list
+            bool is_valid_option = false;
+            for(int i = 0; i < options_list[options].size(); i++){
+                if(data_fields[field].asString() = options_list[options][i].asString()){
+                    is_valid_option = true;
+                    break;
+                }
+            }
+
+            // If option is invalid, push-back to vector
+            if (!is_valid_option){
+                invalid_fields.push_back(field);
+            }
         } 
 
         // Input string check
-        else if (constraints[field][INPUT_TYPE].asString() == STRING){
+        else if (constraints[field][INPUT_TYPE].asString() == STRING ||
+                 constraints[field][INPUT_TYPE].asString() == INTEGER){
+
+            // Check against constraints
+            bool is_valid_option = true;
+            is_valid_option &= !data_fields[field].asString().empty()
+            is_valid_option &= data_fields[field].asString().size() <= constraints[field][MAX_CHARS].asInt();
             
-        } 
+            // If the field must be an integer, then enforce that constraint
+            if (constraints[field][INPUT_TYPE].asString() == INTEGER){
+                bool all_int = true;
+                for(const &character : data_fields[field].asString()){
+                    all_int &= std::isdigit(character);
+                }
+            }
 
-        // Input integer check
-        else if (constraints[field][INPUT_TYPE].asString() == INTEGER){
-
+            // If option is invalid, push-back to vector
+            if (!is_valid_option){
+                invalid_fields.push_back(field);
+            }
         } else{
             invalid_fields.push_back(field);
         }
