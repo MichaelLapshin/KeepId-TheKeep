@@ -45,30 +45,16 @@ class TaskManager {
          */
         bool isRunning();
     protected:
-    private:
-        /**
-         * @class SharedResources
-         * @brief An atomically used class for sharing
-         *        resources across threads.
-         */
-        class SharedResources{
-            public:
-                SharedResources();
-                ~SharedResources();
-                bool loop_thread = false;
-            protected:
-            private:
-        };
-        
+    private:       
         /**
          * TaskManager::workLoop()
          * @brief The method that would be run whenever
          *        the task manager is started.
          */
-        static void workLoop(atomic<SharedResources> &shared_resources);
+        static void workLoop(atomic<bool> &loop_thread);
 
         /**
-         * TaskManager::userDataUpdateTask()
+         * TaskManager::dataUpdateTask()
          * @brief Performs the user data database update task.
          * 
          * @param data_update_input The data to update the database with.
@@ -85,6 +71,6 @@ class TaskManager {
 
         // Variables
         bool is_running = false;
-        atomic<SharedResources> shared_resources;
+        atomic<bool> loop_thread;
         thread *thread_obj;
 };

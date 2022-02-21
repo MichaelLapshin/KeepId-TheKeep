@@ -24,10 +24,7 @@ using namespace std;
  */
 TaskManager::TaskManager(){
     is_running = false;
-    shared_resources = SharedResources();
-
-    // Assertions
-    assert(!std::is_trivially_copyable<SharedResources>::value);
+    loop_thread = false;
 }
 
 /**
@@ -41,7 +38,7 @@ TaskManager::~TaskManager(){
  * start
  */
 void TaskManager::start(){
-    shared_resources.load().loop_thread = true;
+    loop_thread = true;
     thread_obj = new thread(TaskManager::workLoop, this);
     is_running = true;
 }
@@ -50,7 +47,7 @@ void TaskManager::start(){
  * TaskManager::stop()
  */
 void TaskManager::stop(){
-    shared_resources.load().loop_thread = false;
+    loop_thread = false;
     thread_obj->join();
     is_running = false;
 }
@@ -65,8 +62,8 @@ bool TaskManager::isRunning(){
 /**
  * TaskManager::workLoop()
  */
-void TaskManager::workLoop(atomic<SharedResources> &sr){
-    while(sr.load().loop_thread){
+void TaskManager::workLoop(atomic<bool> &loop_thread){
+    while(loop_thread){
         /////////////////////////////////////////////
         ///  Poll and execute user-data updating  ///
         /////////////////////////////////////////////
