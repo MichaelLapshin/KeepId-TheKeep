@@ -30,14 +30,14 @@ class Config{
         static void deinitialize();
         
         /**
-         * Config::validateDataFields()
+         * Config::validateDecryptedDataFields()
          * @brief Validates that the data fields comply with the configuration constraints.
          * 
          * @param data_fields The data fields Json obejct to validate
          * 
          * @return A list of data fields that are considered to be invalid.
          */
-        static vector<string> validateDataFields(const Json::Value &data_fields);
+        static vector<string> validateDecryptedDataFields(const Json::Value &data_fields);
 
         /**
          * Config::getOptionsList()

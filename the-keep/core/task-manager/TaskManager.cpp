@@ -134,7 +134,7 @@ void TaskManager::userDataRequestTask(Json::Value data_request_input){
         TaskManager::userDataUpdateTask(data_update_input); // Sends user_id, encrypted_data_fields
 
         // Validates the decrypted data
-        const vector<string> &invalid_fields = Config::validateDataFields(decrypted_data);
+        const vector<string> &invalid_fields = Config::validateDecryptedDataFields(decrypted_data);
 
         if (invalid_fields.empty()){
             // Generates key pair
