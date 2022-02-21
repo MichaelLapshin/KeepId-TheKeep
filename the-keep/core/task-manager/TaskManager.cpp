@@ -70,34 +70,98 @@ void TaskManager::workLoop(atomic<SharedResources> &sr){
         /////////////////////////////////////////////
         ///  Poll and execute user-data updating  ///
         /////////////////////////////////////////////
-        // Json::Value data_update_json; // = MessageClient.PollFetchDataUpdate()
+        Json::Value data_update_json; // = MessageClient.PollFetchDataUpdate() // Contains user_id, request_id, encrypted_data_fields
         
-        // 
+        TaskManager::userDataUpdateTask(data_update_json);
 
         /////////////////////////////////////////////
         ///     Poll and execute data-request     ///
         /////////////////////////////////////////////
-        Json::Value data_request_input; // = MessageClient.PollFetchDataRequest() // Contains user_id, request_id, private_keys
+        const Json::Value data_request_input; // = MessageClient.fetchUserDataRequest() // Contains user_id, request_id, private_keys, public_keys
+        TaskManager::userDataRequestTask(data_request_input);
+    }
+}
+
+/**
+ * TaskManager::userDataUpdateTask()
+ */
+void TaskManager::userDataUpdateTask(Json::Value data_update_input){
+    Assertions::assertValidDataUpdate(data_update_input);
+
+    // Constants
+    const string &user_id = data_update_input[USER_ID].asString();
+    const Json::Value &encrypted_data_fields = data_update_input[ENCRYPTED_DATA_FIELDS];
+
+    // HolyCow.storeUserData(user_id, encrypted_data); 
+}
+
+/**
+ * TaskManager::userDataRequestTask()
+ */
+void TaskManager::userDataRequestTask(Json::Value data_request_input){
         Assertions::assertValidDataRequest(data_request_input);
 
+        // Constants
+        const vector<string> &data_fields = data_request_input[PUBLIC_KEYS].getMemberNames();
+
+        const string &user_id = data_request_input[USER_ID].asString();
+        const string &request_id = data_request_input[REQUEST_ID].asString();
+        const Json::Value &private_keys = data_request_input[PRIVATE_KEYS];
+        const Json::Value &public_keys = data_request_input[PUBLIC_KEYS];
+        
         // Fetch encrypted user data
-        vector<string> data_fields = data_request_input.getMemberNames();
-        Json::Value encrytped_data; // = MessageClient.FecthKeepData(user_id, data_fields);
-        Json::Value private_keys = data_request_input[PRIVATE_KEYS];
+        const Json::Value encrytped_data; // = HolyCow.fecthKeepUserData(user_id, data_fields);
 
         // Decrypt user data
-        Json::Value decrypted_data;
-        for(string field : data_fields){
-            decrypted_data.append(KeyManager::decryptMessage(encrytped_data[field].asString(),
-                                                             private_keys[field].asString()));
+        Json::Value decrypted_data{};
+        for(const string &field : data_fields){
+            string decrypted_message = KeyManager::decryptMessage(encrytped_data[field].asString(),
+                                                                  private_keys[field].asString());
+            decrypted_data[field] = decrypted_message;
         }
-
-        // Validates the decrypted data
+        Assertions::assertValidDataFields(decrypted_data.getMemberNames());
 
         // Reencrypts the data
+        Json::Value reencrypted_data{};
+        for(const string &field : data_fields){
+            string reencrypted_message = KeyManager::encryptMessage(decrypted_data[field].asString(),
+                                                                    public_keys[field].asString());
+            reencrypted_data[field] = reencrypted_message;
+        }
+        Assertions::assertValidDataFields(reencrypted_data.getMemberNames());
 
-        // Encrypts the data with the company's key
+        // Stores the reencrypted data
+        Json::Value data_update_input;
+        data_update_input[USER_ID] = user_id;
+        data_update_input[ENCRYPTED_DATA_FIELDS] = reencrypted_data;
+        TaskManager::userDataUpdateTask(data_update_input); // Sends user_id, encrypted_data_fields
 
-        // Forwards the company encrypted data
-    }
+        // Validates the decrypted data
+        const vector<string> &invalid_fields = Config::validateDataFields(decrypted_data);
+
+        if (invalid_fields.empty()){
+            // Generates key pair
+            pair<string, string> transmission_key_pair = KeyManager::generateKeyPair();
+            string company_public_key = transmission_key_pair.first;
+            string company_private_key = transmission_key_pair.second;
+            
+            // Encrypts the data with the company's key
+            Json::Value company_encrypted_data{};
+            for(const string &field : data_fields){
+                string company_encrypted_message = KeyManager::encryptMessage(decrypted_data[field].asString(),
+                                                                              company_public_key);
+                company_encrypted_data[field] = company_encrypted_message;
+            }
+            Assertions::assertValidDataFields(company_encrypted_data.getMemberNames());
+
+            // Forwards the company encrypted data
+            // OutputMessageClient.forwardCompanyEncryptedData(request_id, company_encrypted_data);
+
+            // Forwards the private key
+            // OutputMessageClient.forwardCompanyPrivateKey(request_id, string private_key);
+
+        }else{
+            // Forwards the error message
+            // OutputMessageClient.forwardInvalidUserDataFields(request_id, invalid_fields);
+        }
 }

@@ -67,6 +67,22 @@ class TaskManager {
          */
         static void workLoop(atomic<SharedResources> &shared_resources);
 
+        /**
+         * TaskManager::userDataUpdateTask()
+         * @brief Performs the user data database update task.
+         * 
+         * @param data_update_input The data to update the database with.
+         */
+        static void userDataUpdateTask(Json::Value data_update_input);
+
+        /**
+         * TaskManager::userDataRequestTask()
+         * @brief Performs the user data request task.
+         * 
+         * @param data_request_input The data request input Json.
+         */
+        static void userDataRequestTask(Json::Value data_request_input);
+
         // Variables
         bool is_running = false;
         atomic<SharedResources> shared_resources;

@@ -11,6 +11,7 @@
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/reader.h>
 
+#include "../HelperFunctions.cpp"
 #include "Config.hpp"
 #include "Constants.hpp"
 #include "Assertions.hpp"
@@ -47,6 +48,41 @@ void Config::initialize(){
     // Asserts the validity of the configurations
     Assertions::assertDataFieldConfig(*Config::data_field_config);
     Config::initialized = true; 
+}
+
+/**
+ * Config::validateDataFields()
+ */
+vector<string> Config::validateDataFields(const Json::Value &data_fields){
+    const vector<string> invalid_fields;
+
+    Json::Value options_list = Config::getOptionsList();
+    Json::Value constraints = Config::getConstraints();
+    
+    for (const string field : data_field.getMemberNames()){
+        // Options list check
+        if (constraints[field][INPUT_TYPE].asString() == OPTIONS){
+            
+            // Checks that data_field is one of the options
+            assert(findVectorString(options_list[]., data_fields[field]) != -1);
+
+            assert();
+        } 
+
+        // Input string check
+        else if (constraints[field][INPUT_TYPE].asString() == STRING){
+            
+        } 
+
+        // Input integer check
+        else if (constraints[field][INPUT_TYPE].asString() == INTEGER){
+
+        } else{
+            invalid_fields.push_back(field);
+        }
+    }
+
+    return invalid_fields;
 }
 
 /**
