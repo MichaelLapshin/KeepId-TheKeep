@@ -89,7 +89,27 @@ void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
  * Assertions::assertValidDataUpdate()
  */
 void Assertions::assertValidDataUpdate(const Json::Value& data_update_input){
-    // TODO
+    // Checks that the basic members exist
+    if (data_update_input.size() != 2)
+        throw runtime_error("Data update is missing or does not have all required members.");
+
+    if (!data_update_input.isMember(USER_ID) || !data_update_input[USER_ID].isString())
+        throw runtime_error("Data update is missing the user id.");
+    
+    if (!data_update_input.isMember(ENCRYPTED_DATA_FIELDS) || !data_update_input[ENCRYPTED_DATA_FIELDS].isObject())
+        throw runtime_error("Data update is missing the encrypted data fields.");
+
+    // Assert the input encrypted data field follow the expected format
+    Json::Value encrypted_data_fields = data_update_input[ENCRYPTED_DATA_FIELDS];
+    if (encrypted_data_fields.empty()) {
+        throw runtime_error("Data update encrypted data fields member is empty.");
+    }    
+    Assertions::assertValidDataFields(encrypted_data_fields.getMemberNames());
+
+    for (string &member : encrypted_data_fields.getMemberNames()){
+        if (!encrypted_data_fields[member].isString())
+            throw runtime_error("Data update encrypted data fields member '" + member + "' is not a string.");
+    }
 }
 
 
@@ -98,6 +118,9 @@ void Assertions::assertValidDataUpdate(const Json::Value& data_update_input){
  */
 void Assertions::assertValidDataRequest(const Json::Value &data_request_input){
     // Checks that the basic members exist
+    if (data_request_input.size() != 4)
+        throw runtime_error("Data request is missing or does not have all required members.");
+
     if (!data_request_input.isMember(USER_ID) || !data_request_input[USER_ID].isString())
         throw runtime_error("Data request is missing the user id.");
     
@@ -112,8 +135,9 @@ void Assertions::assertValidDataRequest(const Json::Value &data_request_input){
 
     // Asserts the input data field configuration constraints
     Json::Value private_keys = data_request_input[PRIVATE_KEYS];
-    if (private_keys.empty()) throw runtime_error("The private keys member is empty.");    
-
+    if (private_keys.empty()) {
+        throw runtime_error("The private keys member is empty.");    
+    }
     Assertions::assertValidDataFields(private_keys.getMemberNames());
 
     for (const string &member : private_keys.getMemberNames()){
@@ -123,8 +147,9 @@ void Assertions::assertValidDataRequest(const Json::Value &data_request_input){
 
     // Asserts the input data field configuration constraints
     Json::Value public_keys = data_request_input[PUBLIC_KEYS];
-    if (public_keys.empty()) throw runtime_error("The public keys member is empty.");    
-
+    if (public_keys.empty()) {
+        throw runtime_error("The public keys member is empty.");    
+    }
     Assertions::assertValidDataFields(public_keys.getMemberNames());
 
     for (const string &member : public_keys.getMemberNames()){
