@@ -51,19 +51,25 @@ message("Google-Test library found at: ${GOOGLE_TEST_PATH}")
 target_link_libraries(${PROJECT_NAME}
   jsoncpp
   crypto++
+  HelperFunctions
+  DataFields
   CryptoWrappers  
   KeyManager
   DBnMessaging
+  TaskManager
 )
 
 # Adds targets
 target_link_libraries(${PROJECT_NAME}UnitTests
   jsoncpp
   crypto++
+  HelperFunctions
+  DataFields
   CryptoWrappers  
   KeyManager
   DBnMessaging
   # Unit Testing stuff:
+  TaskManager
   gtest
   pthread
   KeepUnitTests

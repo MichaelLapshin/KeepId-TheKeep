@@ -7,11 +7,13 @@
 #include "core/key-manager/KeyManager.hpp"
 #include "core/cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
 #include "core/task-manager/TaskManager.hpp"
+#include "core/data-fields/Config.hpp"
 
 using namespace std;
 
 int main(int argc, char *argv[]){
     // Initializes the critical components of the Keep
+    Config::initialize();
     CryptoWrapper_Cryptopp wrapper;
     KeyManager::initialize(&wrapper);
     TaskManager worker{};
@@ -45,5 +47,6 @@ int main(int argc, char *argv[]){
     }
 
     cout << "Exiting the program..." << endl;
+    Config::deinitialize();
     return 0;
 }

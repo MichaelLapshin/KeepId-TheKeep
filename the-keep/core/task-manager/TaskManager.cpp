@@ -11,7 +11,11 @@
 #include <atomic>
 #include <assert.h>
 
+#include <jsoncpp/json/json.h>
+
 #include "TaskManager.hpp"
+#include "../key-manager/KeyManager.hpp"
+#include "../data-fields/Assertions.cpp"
 
 using namespace std;
 
@@ -64,9 +68,34 @@ bool TaskManager::isRunning(){
 void TaskManager::workLoop(atomic<SharedResources> &sr){
     while(sr.load().loop_thread){
         // Poll and execute user-data updating
-        // string data_update_json = ;
+        // Json::Value data_update_json; // = MessageClient.PollFetchDataUpdate()
         
+        // 
+
         // Poll and execute data-request
-        // string data_request_json = ;
+        Json::Value data_request_input; // = MessageClient.PollFetchDataRequest() // Contains user_id, request_id, private_keys
+        
+
+        // Fetch encrypted user data
+        vector<string> data_fields = data_request_input.getMemberNames();
+        vector<string> encrytped_data; // = MessageClient.FecthKeepData(user_id, data_fields);
+        
+        // Assertions
+        assert(encrytped_data.size() == data_fields.size());
+        
+        // Fecth private keys from JSON
+        Json::Value private_keys = Json.;
+        
+
+        // Decrypt user data
+        vector<string> decrypted_data(data_fields.size());
+        Json::Value data_request_output
+        for(int i = 0; i < decrypted_data.size(); i++){
+            decrypted_data[i] = KeyManager::decryptMessage(, );
+        }
+
+        assert() 
+        Json::Value decrypted_data;
+
     }
 }
