@@ -57,6 +57,7 @@ target_link_libraries(${PROJECT_NAME}
   KeyManager
   DBnMessaging
   TaskManager
+  DBnMessaging
 )
 
 # Adds targets
@@ -70,6 +71,8 @@ target_link_libraries(${PROJECT_NAME}UnitTests
   DBnMessaging
   # Unit Testing stuff:
   TaskManager
+  DBnMessaging
+  # Unit Testing stuff:
   gtest
   pthread
   KeepUnitTests
