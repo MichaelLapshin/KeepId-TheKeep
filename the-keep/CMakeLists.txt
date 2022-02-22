@@ -49,6 +49,7 @@ target_link_libraries(${PROJECT_NAME}
   crypto++
   CryptoWrappers  
   KeyManager
+  DBnMessaging
 )
 
 # Adds targets
@@ -56,6 +57,8 @@ target_link_libraries(${PROJECT_NAME}UnitTests
   crypto++
   CryptoWrappers  
   KeyManager
+  DBnMessaging
+  # Unit Testing stuff:
   gtest
   pthread
   KeepUnitTests
