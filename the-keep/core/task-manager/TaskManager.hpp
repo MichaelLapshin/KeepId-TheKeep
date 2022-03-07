@@ -46,29 +46,6 @@ class TaskManager {
         bool isRunning();
     protected:
     private:       
-        /**
-         * TaskManager::workLoop()
-         * @brief The method that would be run whenever
-         *        the task manager is started.
-         */
-        static void workLoop(atomic<bool> &loop_thread);
-
-        /**
-         * TaskManager::dataUpdateTask()
-         * @brief Performs the user data database update task.
-         * 
-         * @param data_update_input The data to update the database with.
-         */
-        static void userDataUpdateTask(Json::Value data_update_input);
-
-        /**
-         * TaskManager::userDataRequestTask()
-         * @brief Performs the user data request task.
-         * 
-         * @param data_request_input The data request input Json.
-         */
-        static void userDataRequestTask(Json::Value data_request_input);
-
         // Variables
         bool is_running = false;
         atomic<bool> loop_thread;
