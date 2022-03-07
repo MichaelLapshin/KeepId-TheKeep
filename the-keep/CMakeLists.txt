@@ -51,11 +51,12 @@ message("Google-Test library found at: ${GOOGLE_TEST_PATH}")
 target_link_libraries(${PROJECT_NAME}
   jsoncpp
   crypto++
-  HelperFunctions
+#  HelperFunctions
   DataFields
   CryptoWrappers  
   KeyManager
   TaskManager
+  pthread
 )
 
 # Adds targets

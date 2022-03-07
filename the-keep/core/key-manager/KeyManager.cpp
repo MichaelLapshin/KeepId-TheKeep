@@ -5,15 +5,12 @@
  * @date: February 3, 2022
  */
 
-#ifndef KEY_MANAGER
-#define KEY_MANAGER
-
-#include "KeyManager.hpp"
-
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+
+#include "KeyManager.hpp"
 
 using namespace std;
 
@@ -73,7 +70,7 @@ string KeyManager::decryptMessage(string message, string str_priv_key){
  * KeyManager::generateKeyPair()
  */
 pair<string, string> KeyManager::generateKeyPair(){
-    if (!KeyManager::initialize){
+    if (!KeyManager::initialized_){
         throw runtime_error("The KeyManager was not initilaized.");
     }
 
@@ -123,5 +120,3 @@ void KeyManager::readKeysFromStorage(){
             istreambuf_iterator<char>());
     private_key_file.close();
 }
-
-#endif
