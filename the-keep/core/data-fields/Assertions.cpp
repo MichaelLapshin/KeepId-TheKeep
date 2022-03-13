@@ -12,10 +12,10 @@
 
 #include <jsoncpp/json/json.h>
 
-#include "Assertions.hpp"
-#include "../HelperFunctions.hpp"
+#include "../HelperFunctions.cpp"
 #include "Config.hpp"
 #include "Constants.hpp"
+#include "Assertions.hpp"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ void Assertions::assertValidDataFields(const vector<string> &data_fields){
     vector<string> valid_data_fields = Config::getConstraints().getMemberNames();
 
     for (const string &member : data_fields){
-        if (findIndexOfStringInVector(valid_data_fields, member) == -1)
+        if (findVectorString(valid_data_fields, member) == -1)
             throw runtime_error("The data field '" + member + "' is not valid.");
     }
 }
@@ -75,7 +75,7 @@ void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
                 throw runtime_error("Options input type for data field configuration member '" + member + "' does not have options member.");
             }else if (!constraints[member][OPTIONS].isString()){
                 throw runtime_error("Data field configuration '" + member + "' does not have an string option.");
-            }else if (findIndexOfStringInVector(option_names, constraints[member][OPTIONS].asString()) == -1){
+            }else if (findVectorString(option_names, constraints[member][OPTIONS].asString()) == -1){
                 throw runtime_error("Data field configuration '" + member + "' does not specify an existing option list.");
             }
         }else{
@@ -159,12 +159,12 @@ void Assertions::assertValidDataRequest(const Json::Value &data_request_input){
 
     // Asserts that both private keys and public keys are for the same fields
     for (const string &priv_key : private_keys.getMemberNames()){
-        if (findIndexOfStringInVector(public_keys.getMemberNames(), priv_key) == -1)
+        if (findVectorString(public_keys.getMemberNames(), priv_key) == -1)
             throw runtime_error("The private key data field '" + priv_key + "' cannot be matched any public key.");
     }
 
-    for (const string &publ_key : public_keys.getMemberNames()){
-        if (findIndexOfStringInVector(private_keys.getMemberNames(), publ_key) == -1)
+     for (const string &publ_key : public_keys.getMemberNames()){
+        if (findVectorString(private_keys.getMemberNames(), publ_key) == -1)
             throw runtime_error("The public key data field '" + publ_key + "' cannot be matched any private key.");
     }
 }

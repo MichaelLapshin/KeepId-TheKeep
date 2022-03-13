@@ -5,9 +5,6 @@
  * @date: February 3, 2022
  */
 
-#ifndef KEY_MANAGER
-#define KEY_MANAGER
-
 #include <string>
 
 #include "../cryptography-wrappers/CryptoWrapper.hpp"
@@ -21,7 +18,7 @@ class KeyManager {
          * KeyManager::initialize()
          * @brief Reads the public and private keys from the designated file or 
          *          generates and stores the keys if they do not already exist.
-         * @param[in] wrapper The cryptogrophy object with normalized functions.
+         * @param wrapper The cryptogrophy object with normalized functions.
          */
         static void initialize(CryptoWrapper *wrapper);
 
@@ -44,14 +41,14 @@ class KeyManager {
         /**
          * KeyManager::encryptMessage()
          * @brief Allows external members to encrypt their data.
-         * @param[in] message Message to encrypt.
+         * @param message Message to encrypt.
          */
         static string encryptMessage(string message, string str_publ_key = KeyManager::public_key_);
 
         /**
          * KeyManager::decryptMessage()
          * @brief Allows external members to decrypt their data.
-         * @param[in] message Message to decrypt.
+         * @param message Message to decrypt.
          */
         static string decryptMessage(string message, string str_priv_key = KeyManager::private_key_);
     protected:
@@ -90,5 +87,3 @@ class KeyManager {
         inline static CryptoWrapper* crypto_wrapper_ = nullptr;
         inline static bool initialized_ = false;
 };
-
-#endif

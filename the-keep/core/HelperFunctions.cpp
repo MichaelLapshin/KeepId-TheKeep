@@ -8,14 +8,16 @@
 #include <string>
 #include <vector>
 
-#include "HelperFunctions.hpp"
-
-using namespace std;
-
 /*
- * findIndexOfStringInVector()
+ * getIndexOfString()
+ * @brief Finds the index of a string within a vector of strings. 
+ * 
+ * @param list The vector of strings.
+ * @param search The string to find in the vector.
+ * 
+ * @return The index at which the string was found in the vector, or -1 if none was found.
  */
-int findIndexOfStringInVector(const vector<string>& list, const string& search) {
+int findVectorString(const std::vector<std::string>& list, const std::string& search) {
     for(int i = 0; i < list.size(); i++){
         if (list[i] == search) return i;
     }

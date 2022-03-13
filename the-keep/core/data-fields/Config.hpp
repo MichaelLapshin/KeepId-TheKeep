@@ -5,9 +5,6 @@
  * @date: February 19, 2022
  */
 
-#ifndef DATA_FIELD_CONFIG
-#define DATA_FIELD_CONFIG
-
 #include <string>
 #include <vector>
 
@@ -26,17 +23,17 @@ class Config{
         static void initialize();
 
         /**
-         * Config::uninitialize()
+         * Config::deinitialize()
          * @brief Destroys the objects within the Config.
          * @throw Config was never initialized.
          */
-        static void uninitialize();
+        static void deinitialize();
         
         /**
          * Config::validateDecryptedDataFields()
          * @brief Validates that the data fields comply with the configuration constraints.
          * 
-         * @param[in] data_fields The data fields Json obejct to validate
+         * @param data_fields The data fields Json obejct to validate
          * 
          * @return A list of data fields that are considered to be invalid.
          */
@@ -58,8 +55,6 @@ class Config{
 
     private:
         // Variables
-        static inline bool initialized_ = false;
-        static inline Json::Value* data_field_config_;
+        static inline bool initialized = false;
+        static Json::Value* data_field_config;
 };
-
-#endif
