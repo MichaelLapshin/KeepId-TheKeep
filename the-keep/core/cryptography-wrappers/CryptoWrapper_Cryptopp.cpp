@@ -10,6 +10,11 @@ using namespace std;
 using namespace CryptoPP;
 
 /**
+ * CryptoWrapper_Cryptopp::~CryptoWrapper_Cryptopp()
+ */
+CryptoWrapper_Cryptopp::~CryptoWrapper_Cryptopp(){}
+
+/**
  * CryptoWrapper_Cryptopp::generateRSAKeyPair()
  */
 pair<string, string> CryptoWrapper_Cryptopp::generateRSAKeyPair() const {

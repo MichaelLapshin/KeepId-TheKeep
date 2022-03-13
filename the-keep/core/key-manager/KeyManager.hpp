@@ -19,11 +19,17 @@ class KeyManager {
 
         /**
          * KeyManager::initialize()
-         * @brief Reads the public and private keys from the designated file or 
-         *          generates and stores the keys if they do not already exist.
-         * @param[in] wrapper The cryptogrophy object with normalized functions.
+         * @brief Creates cryptography object. Reads the public and private keys
+         *          from the designated file or generates and stores the keys if
+         *          they do not already exist.
          */
-        static void initialize(CryptoWrapper *wrapper);
+        static void initialize();
+
+        /**
+         * KeyManager::uninitialize()
+         * @brief Deletes all static objects. Uninitializes the Key Manager.
+         */
+        static void uninitialize();
 
         /**
          * KeyManager::generateKeyPair()

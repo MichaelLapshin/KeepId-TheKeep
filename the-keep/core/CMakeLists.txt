@@ -7,6 +7,7 @@ message("Added HelperFunctions library.")
 # Add KeyManager
 add_library(KeyManager STATIC
     key-manager/KeyManager.cpp
+    cryptography-wrappers/CryptoWrapper_Cryptopp.cpp
 )
 message("Added KeyManager library.")
 

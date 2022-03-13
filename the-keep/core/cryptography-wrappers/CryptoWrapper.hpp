@@ -8,6 +8,7 @@ using namespace std;
 
 class CryptoWrapper {
     public:
+        virtual ~CryptoWrapper() = default;
         virtual pair<string, string> generateRSAKeyPair() const = 0;
         virtual string encryptRSAMessage(string message,
                                          string str_publ_key) const = 0;

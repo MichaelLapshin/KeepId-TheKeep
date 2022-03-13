@@ -11,11 +11,12 @@
 
 using namespace std;
 
+void initialize();
+void uninitialize();
+
 int main(int argc, char *argv[]){
     // Initializes the critical components of the Keep
-    Config::initialize();
-    CryptoWrapper_Cryptopp wrapper;
-    KeyManager::initialize(&wrapper);
+    initialize();
     TaskManager worker{};
 
     // Starts the command line interface
@@ -46,7 +47,29 @@ int main(int argc, char *argv[]){
         }
     }
 
+    uninitialize();
     cout << "Exiting the program..." << endl;
-    Config::uninitialize();
     return 0;
+}
+
+/**
+ * initialize()
+ * @brief Initializes all components used in running the Keep.
+ */
+void initialize(){
+    cout << "Initializing the Keep... ";
+    Config::initialize();
+    KeyManager::initialize();
+    cout << "Done." << endl;
+}
+
+/**
+ * uninitialize()
+ * @brief Uninitializes all components used in running the Keep.
+ */
+void uninitialize(){
+    cout << "Uninitializing the Keep... ";
+    KeyManager::uninitialize();
+    Config::uninitialize();
+    cout << "Done." << endl;
 }

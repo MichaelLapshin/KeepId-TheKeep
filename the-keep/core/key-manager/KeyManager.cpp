@@ -11,21 +11,22 @@
 #include <filesystem>
 
 #include "KeyManager.hpp"
+#include "../cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
 
 using namespace std;
 
 /**
  * KeyManager::initialize()
  */
-void KeyManager::initialize(CryptoWrapper *wrapper){
+void KeyManager::initialize(){
     if (KeyManager::initialized_){
         throw runtime_error("Attempted to initialize the Key Manager a second time.");
     }
 
-    // House-keeping procedure
-    KeyManager::crypto_wrapper_ = wrapper;
-    KeyManager::initialized_ = true;
+    // Creates new cryptography object
+    KeyManager::crypto_wrapper_ = new CryptoWrapper_Cryptopp();
 
+    // Fills the private and public key variables
     if (areKeysInStorage()){
         // Reads keys from the files
         readKeysFromStorage();
@@ -37,6 +38,20 @@ void KeyManager::initialize(CryptoWrapper *wrapper){
 
         writeKeysToStorage();
     }
+
+    KeyManager::initialized_ = true;
+}
+
+/**
+ * KeyManager::uninitialize()
+ */
+void KeyManager::uninitialize(){
+    if (!KeyManager::initialized_){
+        throw runtime_error("Attempted to uninitialize the Key Manager when it was never initialized.");
+    }
+
+    delete KeyManager::crypto_wrapper_;
+    KeyManager::initialized_ = false;
 }
 
 /*
