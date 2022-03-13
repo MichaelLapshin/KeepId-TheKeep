@@ -47,6 +47,6 @@ int main(int argc, char *argv[]){
     }
 
     cout << "Exiting the program..." << endl;
-    Config::deinitialize();
+    Config::uninitialize();
     return 0;
 }

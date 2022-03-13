@@ -11,43 +11,49 @@
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/reader.h>
 
-#include "../HelperFunctions.cpp"
 #include "Config.hpp"
 #include "Constants.hpp"
 #include "Assertions.hpp"
+#include "../HelperFunctions.hpp"
+
+using namespace std;
 
 /**
  * Config::initialize()
  */
 void Config::initialize(){
-    if (Config::initialized){
+    if (Config::initialized_){
         throw runtime_error("Data field configurations were already initialized.");
     }
 
     // Reads all lines from the configurations file
-    std::ifstream file_input_stream(DATA_FIELD_CONFIG_FILE_NAME);
-    std::string json_contents;
-    json_contents.assign((std::istreambuf_iterator<char>(file_input_stream)),
-                         (std::istreambuf_iterator<char>()));
+    ifstream file_input_stream(DATA_FIELD_CONFIG_FILE_NAME);
+    string json_contents;
+    json_contents.assign((istreambuf_iterator<char>(file_input_stream)),
+                         (istreambuf_iterator<char>()));
     file_input_stream.close();
     
     // Creates config Json object
-    Json::Reader file_reader;
-    file_reader.parse(json_contents,
-                      *Config::data_field_config,
-                      false /* collectComments */);
-
+    const char* json_contents_c_string = json_contents.c_str();
+    Json::CharReaderBuilder json_builder;
+    string err_msg;
+    bool parse_success = json_builder.newCharReader()->parse(
+                            json_contents_c_string /* begin */, 
+                            json_contents_c_string + strlen(json_contents_c_string) /* end */, 
+                            Config::data_field_config_ /* root */,
+                            &err_msg /* errs */);
+    
     // Handles parsing errors
-    if (!file_reader.getFormatedErrorMessages().empty()){
+    if (!parse_success){
         throw runtime_error(
             "Error. The data field configuration file was unsuccessfully "
-            "parsed.\n" + file_reader.getFormattedErrorMessages()
+            "parsed.\n" + err_msg
         );
     }
 
     // Asserts the validity of the configurations
-    Assertions::assertDataFieldConfig(*Config::data_field_config);
-    Config::initialized = true; 
+    Assertions::assertDataFieldConfig(*Config::data_field_config_);
+    Config::initialized_ = true; 
 }
 
 /**
@@ -57,20 +63,20 @@ vector<string> Config::validateDecryptedDataFields(const Json::Value &data_field
     Assertions::assertValidDataFields(data_fields.getMemberNames());
 
     // Accumulates the invalid fields
-    const vector<string> invalid_fields;
+    vector<string> invalid_fields;
 
     Json::Value options_list = Config::getOptionsList();
     Json::Value constraints = Config::getConstraints();
     
-    for (const string field : data_field.getMemberNames()){
+    for (const string field : data_fields.getMemberNames()){
         // Options list check
         if (constraints[field][INPUT_TYPE].asString() == OPTIONS){
-            string options = constraints[field][OPTIONS];
+            string options = constraints[field][OPTIONS].asString();
 
             // Check if the option is within the options list
             bool is_valid_option = false;
             for(int i = 0; i < options_list[options].size(); i++){
-                if(data_fields[field].asString() = options_list[options][i].asString()){
+                if(data_fields[field].asString() == options_list[options][i].asString()){
                     is_valid_option = true;
                     break;
                 }
@@ -88,14 +94,14 @@ vector<string> Config::validateDecryptedDataFields(const Json::Value &data_field
 
             // Check against constraints
             bool is_valid_option = true;
-            is_valid_option &= !data_fields[field].asString().empty()
+            is_valid_option &= !data_fields[field].asString().empty();
             is_valid_option &= data_fields[field].asString().size() <= constraints[field][MAX_CHARS].asInt();
             
             // If the field must be an integer, then enforce that constraint
             if (constraints[field][INPUT_TYPE].asString() == INTEGER){
                 bool all_int = true;
-                for(const &character : data_fields[field].asString()){
-                    all_int &= std::isdigit(character);
+                for(const char &character : data_fields[field].asString()){
+                    all_int &= isdigit(character);
                 }
             }
 
@@ -114,13 +120,13 @@ vector<string> Config::validateDecryptedDataFields(const Json::Value &data_field
 /**
  * Config::deinitialize()
  */
-void Config::deinitialize(){
-    if (!Config::initialized){
+void Config::uninitialize(){
+    if (!Config::initialized_){
         throw runtime_error("Data field configurations were not initialized.");
     }
 
-    delete data_field_config;
-    Config::initialized = false; 
+    delete Config::data_field_config_;
+    Config::initialized_ = false; 
 }
 
 
@@ -128,19 +134,19 @@ void Config::deinitialize(){
  * Config::getOptionsList()
  */
 Json::Value Config::getOptionsList(){
-    if (!Config::initialized){
+    if (!Config::initialized_){
         throw runtime_error("Data field configurations were not initialized.");
     }
-    return (*data_field_config)[OPTIONS_LIST];
+    return (*Config::data_field_config_)[OPTIONS_LIST];
 }
 
 /**
  * Config::getConstraints()
  */
 Json::Value Config::getConstraints(){
-    if (!Config::initialized){
+    if (!Config::initialized_){
         throw runtime_error("Data field configurations were not initialized.");
     }
-    return (*data_field_config)[CONSTRAINTS];
+    return (*Config::data_field_config_)[CONSTRAINTS];
 }
 
