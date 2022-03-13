@@ -1,5 +1,4 @@
 # Ignore VSCode folders and files
-*.devcontainer/
 *.vscode/
 
 # Ignore compiled code
