@@ -17,7 +17,6 @@ using namespace std;
 
 class CryptoWrapper_Cryptopp : public CryptoWrapper {
     public:
-        ~CryptoWrapper_Cryptopp();
         pair<string, string> generateRSAKeyPair() const override;
         string encryptRSAMessage(string message, string str_publ_key) const override;
         string decryptRSAMessage(string message, string str_priv_key) const override;
