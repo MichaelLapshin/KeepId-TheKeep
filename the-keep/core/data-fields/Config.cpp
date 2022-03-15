@@ -57,6 +57,18 @@ void Config::initialize(){
 }
 
 /**
+ * Config::deinitialize()
+ */
+void Config::uninitialize(){
+    if (!Config::initialized_){
+        throw runtime_error("Data field configurations were not initialized.");
+    }
+
+    delete Config::data_field_config_;
+    Config::initialized_ = false; 
+}
+
+/**
  * Config::validateDecryptedDataFields()
  */
 vector<string> Config::validateDecryptedDataFields(const Json::Value &data_fields){
@@ -116,19 +128,6 @@ vector<string> Config::validateDecryptedDataFields(const Json::Value &data_field
 
     return invalid_fields;
 }
-
-/**
- * Config::deinitialize()
- */
-void Config::uninitialize(){
-    if (!Config::initialized_){
-        throw runtime_error("Data field configurations were not initialized.");
-    }
-
-    delete Config::data_field_config_;
-    Config::initialized_ = false; 
-}
-
 
 /**
  * Config::getOptionsList()

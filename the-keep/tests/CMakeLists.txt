@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.18.4)
 
 # Add Tests
-add_library(KeepUnitTests OBJECT 
+add_library(KeepUnitTests OBJECT
+    test_common.cpp
     Test_CryptoWrapper_Cryptopp.cpp
     Test_DataField_Assertions.cpp
     Test_HelperFunctions.cpp
