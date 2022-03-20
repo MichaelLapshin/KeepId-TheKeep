@@ -1,0 +1,47 @@
+{
+	"option_lists" : {
+		"OPTIONS_A" : [
+			"option_A_1",
+            "option_A_2"
+		],
+		"OPTIONS_B" : [
+			"option_B_1",
+            "option_B_2",
+            "option_B_3"
+		],
+        "OPTIONS_B" : [
+			"option_B_1",
+            "option_B_2"
+		]
+	},
+	"constraints" : {
+		"DATA_FIELD_STRING_1" : {
+			"input_type" : "string",
+			"max_chars" : 64
+		},
+		"DATA_FIELD_STRING_2" : {
+			"input_type" : "string",
+			"max_chars" : 40
+		},
+        "DATA_FIELD_INTEGER_1" : {
+			"input_type" : "int",
+			"max_chars" : 20
+		},
+		"DATA_FIELD_INTEGER_2" : {
+			"input_type" : "int",
+			"max_chars" : 10
+		},
+        "DATA_FIELD_OPTIONS_1" : {
+			"input_type" : "options",
+			"options" : "OPTIONS_A"
+		},
+		"DATA_FIELD_OPTIONS_2" : {
+			"input_type" : "options",
+			"options" : "OPTIONS_B"
+		},
+        "DATA_FIELD_OPTIONS_3" : {
+			"input_type" : "options",
+			"options" : "OPTIONS_A"
+		}
+    }
+}
