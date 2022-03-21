@@ -1,5 +1,7 @@
 # Ignore VSCode folders and files
 *.vscode/
+.idea/
+.DS_Store
 
 # Ignore compiled code
 **/build
