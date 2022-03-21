@@ -144,3 +144,38 @@ TEST(TestKeyManager, EncryptDecryptMessageComplex){
     // Resets the Key Manager
     EXPECT_NO_THROW(KeyManager::uninitialize());
 }
+
+/**
+ * ValidatePublicKeys - Checks that the validatePublicKey() method correctly
+ *                      detects valid public keys.
+ */
+TEST(TestKeyManager, ValidatePublicKeys){
+    // Intiliaze the KeyManager
+    ASSERT_NO_THROW(KeyManager::initialize());
+
+    // Test a valid and invalid key
+    string valid_public_key = readFile("the-keep/tests/sample_test_keys/KeepPublicKey.test_dat");
+    ASSERT_TRUE(KeyManager::validatePublicKey(valid_public_key));
+    ASSERT_FALSE(KeyManager::validatePublicKey("SOME INVALID PRIVATE KEY."));
+
+    // Resets the Key Manager
+    EXPECT_NO_THROW(KeyManager::uninitialize());
+}
+
+
+/**
+ * ValidatePrivateKeys - Checks that the validatePrivateKey() method correctly
+ *                       detects valid private keys.
+ */
+TEST(TestKeyManager, ValidatePrivateKeys){
+    // Intiliaze the KeyManager
+    ASSERT_NO_THROW(KeyManager::initialize());
+
+    // Test a valid and invalid key
+    string valid_private_key = readFile("the-keep/tests/sample_test_keys/KeepPrivateKey.test_dat");
+    ASSERT_TRUE(KeyManager::validatePrivateKey(valid_private_key));
+    ASSERT_FALSE(KeyManager::validatePrivateKey("SOME INVALID PRIVATE KEY."));
+
+    // Resets the Key Manager
+    EXPECT_NO_THROW(KeyManager::uninitialize());
+}

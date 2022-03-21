@@ -84,3 +84,45 @@ string CryptoWrapper_Cryptopp::decryptRSAMessage(string message, string str_priv
 
     return decrypted_string;
 }
+
+/**
+ * CryptoWrapper_Cryptopp::validatePublicKey()
+ */
+bool CryptoWrapper_Cryptopp::validatePublicKey(string public_key) const {
+    // Obtains library-compatible public key object
+    RSA::PublicKey rsa_public_key;
+    StringSource ss_publ_key(public_key, true);
+        
+    try{
+        rsa_public_key.BERDecode(ss_publ_key);
+    } catch(...){
+        return false;
+    }
+
+    // Create random generator
+    AutoSeededRandomPool random_gen;
+
+    return rsa_public_key.Validate(random_gen, 3);
+}
+
+/**
+ * CryptoWrapper_Cryptopp::validatePrivateKey()
+ */
+bool CryptoWrapper_Cryptopp::validatePrivateKey(string private_key) const {
+    // Obtains library-compatible public key object
+    RSA::PrivateKey rsa_private_key;
+    StringSource ss_priv_key(private_key, true);
+    
+    try{
+        rsa_private_key.BERDecode(ss_priv_key);
+    } catch(...){
+        return false;
+    }
+
+    // Create random generator
+    AutoSeededRandomPool random_gen;
+
+    return rsa_private_key.Validate(random_gen, 3);
+}
+
+

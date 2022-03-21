@@ -5,6 +5,7 @@
 #include <crypto++/rsa.h>
 #include <crypto++/osrng.h>
 
+#include "test_common.hpp"
 #include "../core/cryptography-wrappers/CryptoWrapper.hpp"
 #include "../core/cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
 
@@ -102,4 +103,31 @@ TEST(TestCryptoWrapper_CryptoPP, EncryptDecryptMessageComplex){
 
     EXPECT_EQ(sample_msg_1, enclosed_decr_1);
     EXPECT_EQ(sample_msg_2, enclosed_decr_2);
+}
+
+/**
+ * ValidatePublicKeys - Checks that the validatePublicKey() method correctly
+ *                      detects valid public keys.
+ */
+TEST(TestCryptoWrapper_CryptoPP, ValidatePublicKeys){
+    CryptoWrapper_Cryptopp wrapper;
+
+    // Test a valid and invalid key
+    string valid_public_key = readFile("the-keep/tests/sample_test_keys/KeepPublicKey.test_dat");
+    ASSERT_TRUE(wrapper.validatePublicKey(valid_public_key));
+    ASSERT_FALSE(wrapper.validatePublicKey("SOME INVALID PRIVATE KEY."));
+}
+
+
+/**
+ * ValidatePrivateKeys - Checks that the validatePrivateKey() method correctly
+ *                       detects valid private keys.
+ */
+TEST(TestCryptoWrapper_CryptoPP, ValidatePrivateKeys){
+    CryptoWrapper_Cryptopp wrapper;
+
+    // Test a valid and invalid key
+    string valid_private_key = readFile("the-keep/tests/sample_test_keys/KeepPrivateKey.test_dat");
+    ASSERT_TRUE(wrapper.validatePrivateKey(valid_private_key));
+    ASSERT_FALSE(wrapper.validatePrivateKey("SOME INVALID PRIVATE KEY."));
 }

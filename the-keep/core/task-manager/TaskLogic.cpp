@@ -33,8 +33,7 @@ void workLoop(atomic<bool> &loop_thread){
         /////////////////////////////////////////////
         ///  Poll and execute user-data updating  ///
         /////////////////////////////////////////////
-        Json::Value data_update_json; // = MessageClient.PollFetchDataUpdate() // Contains user_id, request_id, encrypted_data_fields
-        
+        Json::Value data_update_json; // = MessageClient.PollFetchDataUpdate() // Contains user_id, encrypted_data_fields
         userDataUpdateTask(data_update_json);
 
         /////////////////////////////////////////////
@@ -68,19 +67,32 @@ void userDataUpdateTask(Json::Value data_update_input){
  * @param[in] data_request_input The data request input Json.
  */
 void userDataRequestTask(Json::Value data_request_input){
-    Assertions::assertValidDataRequest(data_request_input);
+    Assertions::assertValidDataRequest(data_request_input);  
 
     // Constants
     const vector<string> &data_fields = data_request_input[PUBLIC_KEYS].getMemberNames();
-
     const string &user_id = data_request_input[USER_ID].asString();
     const string &request_id = data_request_input[REQUEST_ID].asString();
     
     // Decrypts the given public and private keys using the Keep's private key
+    vector<string> invalid_keys;
     Json::Value public_keys, private_keys;
-    for(const string &field : data_fields){
-        public_keys[field] = KeyManager::decryptMessage(data_request_input[PUBLIC_KEYS].asString());
-        private_keys[field] = KeyManager::decryptMessage(data_request_input[PRIVATE_KEYS].asString());
+    for(const string field : data_fields){
+        string public_key = KeyManager::decryptMessage(data_request_input[PUBLIC_KEYS].asString());
+        string private_key = KeyManager::decryptMessage(data_request_input[PRIVATE_KEYS].asString());
+
+        // Ensures that the given keys are valid
+        if (!KeyManager::validatePublicKey(public_key) || !KeyManager::validatePrivateKey(private_key)){
+            invalid_keys.push_back(field);
+        }else{
+            public_keys[field] = public_key;
+            private_keys[field] = private_key;  
+        }
+    }
+
+    if (!invalid_keys.empty()){
+        // Forwards the error message if keys are invalid
+        // OutputMessageClient.forwardInvalidDataKeys(request_id, invalid_fields);
     }
 
     // Fetch encrypted user data
@@ -89,18 +101,16 @@ void userDataRequestTask(Json::Value data_request_input){
     // Decrypt user data
     Json::Value decrypted_data{};
     for(const string &field : data_fields){
-        string decrypted_message = KeyManager::decryptMessage(encrytped_data[field].asString(),
-                                                                private_keys[field].asString());
-        decrypted_data[field] = decrypted_message;
+        decrypted_data[field] = KeyManager::decryptMessage(encrytped_data[field].asString(),
+                                                           private_keys[field].asString());
     }
     Assertions::assertValidDataFields(decrypted_data.getMemberNames());
 
     // Reencrypts the data
     Json::Value reencrypted_data{};
     for(const string &field : data_fields){
-        string reencrypted_message = KeyManager::encryptMessage(decrypted_data[field].asString(),
-                                                                public_keys[field].asString());
-        reencrypted_data[field] = reencrypted_message;
+        reencrypted_data[field] = KeyManager::encryptMessage(decrypted_data[field].asString(),
+                                                             public_keys[field].asString());
     }
     Assertions::assertValidDataFields(reencrypted_data.getMemberNames());
 

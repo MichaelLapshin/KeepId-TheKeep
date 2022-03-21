@@ -82,6 +82,20 @@ string KeyManager::decryptMessage(string message, string str_priv_key){
 }
 
 /**
+ * KeyManager::validatePublicKey()
+ */
+bool KeyManager::validatePublicKey(string public_key){
+    return KeyManager::crypto_wrapper_->validatePublicKey(public_key);
+}
+
+/**
+ * KeyManager::validatePrivateKey()
+ */
+bool KeyManager::validatePrivateKey(string private_key){
+    return KeyManager::crypto_wrapper_->validatePrivateKey(private_key);
+}
+
+/**
  * KeyManager::generateKeyPair()
  */
 pair<string, string> KeyManager::generateKeyPair(){

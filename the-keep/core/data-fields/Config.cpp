@@ -103,9 +103,8 @@ vector<string> Config::validateDecryptedDataFields(const Json::Value &data_field
             
             // If the field must be an integer, then enforce that constraint
             if (constraints[field][INPUT_TYPE].asString() == INTEGER){
-                bool all_int = true;
                 for(const char &character : data_fields[field].asString()){
-                    all_int &= isdigit(character);
+                    is_valid_option &= isdigit(character);
                 }
             }
 
