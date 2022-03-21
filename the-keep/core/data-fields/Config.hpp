@@ -59,7 +59,7 @@ class Config{
     private:
         // Variables
         static inline bool initialized_ = false;
-        static inline Json::Value* data_field_config_;
+        static inline Json::Value* data_field_config_ = nullptr;
 };
 
 #endif

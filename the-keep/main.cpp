@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "core/key-manager/KeyManager.hpp"
-#include "core/cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
 #include "core/task-manager/TaskManager.hpp"
 #include "core/data-fields/Config.hpp"
 

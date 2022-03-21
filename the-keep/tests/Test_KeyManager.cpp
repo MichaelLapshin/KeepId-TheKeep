@@ -12,6 +12,7 @@
 
 #include <gtest/gtest.h>
 
+#include "test_common.hpp"
 #include "../core/key-manager/KeyManager.hpp"
 #include "../core/cryptography-wrappers/CryptoWrapper.hpp"
 #include "../core/cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
@@ -63,33 +64,15 @@ TEST(TestKeyManager, GetPublicKey){
  * ReadKeysFromStorage - Test that the KeyManager correctly read the keys.
  */
 TEST(TestKeyManager, ReadKeysFromStorage){
-    // Obtains the sample test keys from the tests folder
-    ifstream in_public_key_file {string("./the-keep/tests/sample_test_keys/KeepPublicKey.test_dat")};
-    string str_public_key;
-    str_public_key.assign(istreambuf_iterator<char>(in_public_key_file),
-                          istreambuf_iterator<char>());
-    in_public_key_file.close();
-
-    ifstream in_private_key_file {string("./the-keep/tests/sample_test_keys/KeepPrivateKey.test_dat")};
-    string str_private_key;
-    str_private_key.assign(istreambuf_iterator<char>(in_private_key_file),
-                           istreambuf_iterator<char>());
-    in_private_key_file.close();
-    
-    // Writes the keys into standard location
-    ofstream out_public_key_file {string("KeepPublicKey.dat")};
-    out_public_key_file << str_public_key;
-    out_public_key_file.close();
-
-    // Saves private key
-    ofstream out_private_key_file {string("KeepPrivateKey.dat")};
-    out_private_key_file << str_private_key;
-    out_private_key_file.close();
+    // Copies sample keys from sample folder into standard location
+    copyFile("the-keep/tests/sample_test_keys/KeepPublicKey.test_dat", "KeepPublicKey.dat");
+    copyFile("the-keep/tests/sample_test_keys/KeepPrivateKey.test_dat", "KeepPrivateKey.dat");
 
     // Intiliaze the KeyManager (the KeyManager should read the keys from the .dat files)
     ASSERT_NO_THROW(KeyManager::initialize());
 
     // Assert that the public key from the KeyManager matches that of the file
+    std::string str_public_key = readFile("./the-keep/tests/sample_test_keys/KeepPublicKey.test_dat");
     EXPECT_EQ(KeyManager::getPublicKey(), str_public_key);
 
     // To test the private key, we encrypt a message using the public key and 

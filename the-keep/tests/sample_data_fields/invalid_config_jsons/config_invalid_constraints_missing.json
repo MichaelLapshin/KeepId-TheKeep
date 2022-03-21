@@ -1,0 +1,13 @@
+{
+	"option_lists" : {
+		"OPTIONS_A" : [
+			"option_A_1",
+            "option_A_2"
+		],
+		"OPTIONS_B" : [
+			"option_B_1",
+            "option_B_2",
+            "option_B_3"
+		]
+	}
+}
