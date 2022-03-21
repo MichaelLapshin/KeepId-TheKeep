@@ -6,8 +6,10 @@
  * @date: February 19, 2022
  */
 
+#pragma once
 #include <thread>
 #include <atomic>
+#include <jsoncpp/json/json.h>
 
 using namespace std;
 

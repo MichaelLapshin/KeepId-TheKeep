@@ -15,7 +15,9 @@
 
 #include "TaskManager.hpp"
 #include "../key-manager/KeyManager.hpp"
-#include "../data-fields/Assertions.cpp"
+#include "../data-fields/Assertions.hpp"
+#include "../data-fields/Config.hpp"
+#include "../data-fields/Constants.hpp"
 
 using namespace std;
 
@@ -39,7 +41,7 @@ TaskManager::~TaskManager(){
  */
 void TaskManager::start(){
     loop_thread = true;
-    thread_obj = new thread(TaskManager::workLoop, this);
+    // thread_obj = new thread(TaskManager::workLoop, this);
     is_running = true;
 }
 

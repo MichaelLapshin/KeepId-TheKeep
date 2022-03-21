@@ -5,8 +5,6 @@
  * @date: February 3, 2022
  */
 
-#ifndef KEY_MANAGER
-#define KEY_MANAGER
 
 #include "KeyManager.hpp"
 
@@ -123,5 +121,3 @@ void KeyManager::readKeysFromStorage(){
             istreambuf_iterator<char>());
     private_key_file.close();
 }
-
-#endif

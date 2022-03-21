@@ -30,7 +30,7 @@ int CassandraDriver::connect(const string& ip, const string& user, const string&
 
 }
 //
-void disconnect() {
+void CassandraDriver::disconnect() {
   cass_future_free(connect_future);
   cass_cluster_free(cluster);
   cass_session_free(session);

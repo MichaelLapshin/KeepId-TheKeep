@@ -32,7 +32,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 add_executable(${PROJECT_NAME}UnitTests tests/test_main.cpp)
 
 ### Main subdirectories to include ###
-# add_subdirectory(comms)
+add_subdirectory(comms)
 add_subdirectory(core)
 add_subdirectory(tests)
 
@@ -51,28 +51,25 @@ message("Google-Test library found at: ${GOOGLE_TEST_PATH}")
 target_link_libraries(${PROJECT_NAME}
   jsoncpp
   crypto++
-  HelperFunctions
+  #HelperFunctions
   DataFields
   CryptoWrappers  
   KeyManager
   DBnMessaging
   TaskManager
-  DBnMessaging
+  pthread
 )
 
 # Adds targets
 target_link_libraries(${PROJECT_NAME}UnitTests
   jsoncpp
   crypto++
-  HelperFunctions
+  #HelperFunctions
   DataFields
   CryptoWrappers  
   KeyManager
   DBnMessaging
-  # Unit Testing stuff:
   TaskManager
-  DBnMessaging
-  # Unit Testing stuff:
   gtest
   pthread
   KeepUnitTests
