@@ -1,6 +1,7 @@
-# Ignore VSCode folders and files
+# Ignore IDE folders and files
 *.vscode/
 .idea/
+**/libs/
 .DS_Store
 
 # Ignore compiled code

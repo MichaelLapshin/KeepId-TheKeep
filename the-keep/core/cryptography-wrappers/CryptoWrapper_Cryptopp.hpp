@@ -5,8 +5,7 @@
  * @date: February 5, 2022
  */
 
-#ifndef CRYPTO_WRAPPER_CRYPTOPP
-#define CRYPTO_WRAPPER_CRYPTOPP
+#pragma once
 
 #include <utility>
 #include <string>
@@ -25,5 +24,3 @@ class CryptoWrapper_Cryptopp : public CryptoWrapper {
     protected:
     private:
 };
-
-#endif
