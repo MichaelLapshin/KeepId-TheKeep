@@ -36,7 +36,8 @@ class Config{
          * Config::validateDecryptedDataFields()
          * @brief Validates that the data fields comply with the configuration constraints.
          * 
-         * @param[in] data_fields The data fields Json obejct to validate
+         * @param[in] data_fields The data fields Json object to validate.
+         *                        Format: {"field1" : "value1", "field2" : "value2", ...}
          * 
          * @return A list of data fields that are considered to be invalid.
          */
@@ -59,7 +60,7 @@ class Config{
     private:
         // Variables
         static inline bool initialized_ = false;
-        static inline Json::Value* data_field_config_;
+        static inline Json::Value* data_field_config_ = nullptr;
 };
 
 #endif

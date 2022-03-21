@@ -13,7 +13,7 @@
 
 // Configurations constants
 const std::string DATA_FIELD_CONFIG_FILE_NAME = "data-fields-config.json";
-const std::string OPTIONS_LIST = "options_list";
+const std::string OPTION_LISTS = "option_lists";
 const std::string CONSTRAINTS = "constraints";
 
 // Data transmission constants

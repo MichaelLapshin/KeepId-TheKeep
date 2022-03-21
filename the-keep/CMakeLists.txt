@@ -36,7 +36,6 @@ add_subdirectory(comms)
 add_subdirectory(core)
 add_subdirectory(tests)
 
-
 ### Find external libaries ###
 find_library(JSON_CPP_PATH jsoncpp)
 message("Json C++ library found at: ${JSON_CPP_PATH}")
@@ -51,7 +50,7 @@ message("Google-Test library found at: ${GOOGLE_TEST_PATH}")
 target_link_libraries(${PROJECT_NAME}
   jsoncpp
   crypto++
-  #HelperFunctions
+  HelperFunctions
   DataFields
   CryptoWrappers  
   KeyManager
@@ -64,7 +63,7 @@ target_link_libraries(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}UnitTests
   jsoncpp
   crypto++
-  #HelperFunctions
+  HelperFunctions
   DataFields
   CryptoWrappers  
   KeyManager

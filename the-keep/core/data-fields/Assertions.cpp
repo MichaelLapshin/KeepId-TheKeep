@@ -23,6 +23,8 @@ using namespace std;
  * Assertions::assertValidDataFields()
  */
 void Assertions::assertValidDataFields(const vector<string> &data_fields){
+    if (data_fields.empty()) throw runtime_error("The data fields vector is empty.");
+
     vector<string> valid_data_fields = Config::getConstraints().getMemberNames();
 
     for (const string &member : data_fields){
@@ -36,15 +38,28 @@ void Assertions::assertValidDataFields(const vector<string> &data_fields){
  * Assertions::assertDataFieldConfig()
  */
 void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
+    if (data_field_config.size() != 2)
+        throw runtime_error("Data field configuration fields are missing or are in excess.");
+
     // Asserts the options list
-    if (!data_field_config.isMember(OPTIONS_LIST) || !data_field_config[OPTIONS_LIST].isObject())
+    if (!data_field_config.isMember(OPTION_LISTS) || !data_field_config[OPTION_LISTS].isObject())
         throw runtime_error("The options list member is missing in the configuration file.");
 
-    Json::Value options_list = data_field_config[OPTIONS_LIST];
-    vector<string> option_names = options_list.getMemberNames();
-    for(string member : option_names){
-        if (!options_list[member].isArray())
-            throw runtime_error("The options list configuration member '" + member + "' is not an array.");
+    Json::Value option_lists = data_field_config[OPTION_LISTS];
+    vector<string> option_names = option_lists.getMemberNames();
+    for(string list : option_names){
+        if (!option_lists[list].isArray())
+            throw runtime_error("The configuration options list '" + list + "' is not an array.");
+
+        if (option_lists[list].empty())
+            throw runtime_error("The configuration options list '" + list + "' is empty.");
+
+        // Assert options content
+        for(int index = 0; index < option_lists[list].size(); index++){
+            if (!option_lists[list][index].isString())
+                throw runtime_error("The options list '" + list + "'s at index '" + to_string(index) + "' is not a string.");
+
+        }
     }
 
     // Asserts the data fields constraints
@@ -52,6 +67,9 @@ void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
         throw runtime_error("The constraints member is missing in the configuration file.");
     
     Json::Value constraints = data_field_config[CONSTRAINTS];
+    if (constraints.empty())
+        throw runtime_error("Data field configuration constraints object is empty.");
+
     for(const string &member : constraints.getMemberNames()){
         if (!constraints[member].isObject())
             throw runtime_error("The data field configuration member '" + member + "' is not a Json object.");
@@ -63,12 +81,17 @@ void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
             throw runtime_error("The data field configuration member '" + member + "' does not map to a valid object.");        
         
         // Check validity of the input type
+        if (!constraints[member][INPUT_TYPE].isString())
+            throw runtime_error("The data field configuration member '" + member + "'s input type is not a string.");
+
         string input_type = constraints[member][INPUT_TYPE].asString();
         if (input_type == STRING || input_type == INTEGER){
             if (!constraints[member].isMember(MAX_CHARS)){
                 throw runtime_error("An data field string or integer input type does not have max-chars configuration.");
             }else if (!constraints[member][MAX_CHARS].isInt()){
                 throw runtime_error("Data field configuration '" + member + "' does not have an integer max-chars.");
+            }else if(constraints[member][MAX_CHARS].asInt() <= 0){
+                throw runtime_error("Data field configuration '" + member + "'s integer max-chars is not a positive number.");
             }
         }else if (input_type == OPTIONS){
             if (!constraints[member].isMember(OPTIONS)){
@@ -79,7 +102,7 @@ void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
                 throw runtime_error("Data field configuration '" + member + "' does not specify an existing option list.");
             }
         }else{
-            assert(false); // Should never reach this line
+            throw runtime_error("Data field configuration '" + member + "'s input type is invalid.");
         }
     }
 }
@@ -91,7 +114,7 @@ void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
 void Assertions::assertValidDataUpdate(const Json::Value& data_update_input){
     // Checks that the basic members exist
     if (data_update_input.size() != 2)
-        throw runtime_error("Data update is missing or does not have all required members.");
+        throw runtime_error("Data update fields are missing or are in excess.");
 
     if (!data_update_input.isMember(USER_ID) || !data_update_input[USER_ID].isString())
         throw runtime_error("Data update is missing the user id.");

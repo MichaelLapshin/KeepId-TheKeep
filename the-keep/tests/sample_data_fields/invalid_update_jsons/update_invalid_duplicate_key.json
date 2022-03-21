@@ -1,0 +1,12 @@
+{
+    "user_id" : "SAMPLE_USER_INTERNAL_ID",
+    "user_id" : "ANOTHER_SAMPLE_USER_INTERNAL_ID",
+    "encrypted_data_fields" : {
+        "name_FirstName" : "Some random encrypted text for name_FirstName",
+        "name_LastName" : "Some random encrypted text for name_LastName",
+        "payment_CardNumber" : "Some random encrypted text for payment_CardNumber",
+        "payment_ExpirationMonth" : "Some random encrypted text for payment_ExpirationMonth",
+        "payment_ExpirationYear" : "Some random encrypted text for payment_Expirationyear",
+        "payment_SecurityCode" : "Some random encrypted text for payment_SecurityCode"
+    }
+}

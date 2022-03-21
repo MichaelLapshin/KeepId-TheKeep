@@ -19,11 +19,17 @@ class KeyManager {
 
         /**
          * KeyManager::initialize()
-         * @brief Reads the public and private keys from the designated file or 
-         *          generates and stores the keys if they do not already exist.
-         * @param[in] wrapper The cryptogrophy object with normalized functions.
+         * @brief Creates cryptography object. Reads the public and private keys
+         *          from the designated file or generates and stores the keys if
+         *          they do not already exist.
          */
-        static void initialize(CryptoWrapper *wrapper);
+        static void initialize();
+
+        /**
+         * KeyManager::uninitialize()
+         * @brief Deletes all static objects. Uninitializes the Key Manager.
+         */
+        static void uninitialize();
 
         /**
          * KeyManager::generateKeyPair()
@@ -44,6 +50,7 @@ class KeyManager {
         /**
          * KeyManager::encryptMessage()
          * @brief Allows external members to encrypt their data.
+         * 
          * @param[in] message Message to encrypt.
          */
         static string encryptMessage(string message, string str_publ_key = KeyManager::public_key_);
@@ -51,9 +58,30 @@ class KeyManager {
         /**
          * KeyManager::decryptMessage()
          * @brief Allows external members to decrypt their data.
+         * 
          * @param[in] message Message to decrypt.
          */
         static string decryptMessage(string message, string str_priv_key = KeyManager::private_key_);
+    
+        /**
+         * KeyManager::validatePublicKey()
+         * @brief Validates the given public key.
+         * 
+         * @param[in] public_key The key to validate.
+         * 
+         * @return True if the key is valid, otherwise false.
+         */
+        static bool validatePublicKey(string public_key);
+
+        /**
+         * KeyManager::validatePrivateKey()
+         * @brief Validates the given private key.
+         * 
+         * @param[in] private_key The key to validate.
+         * 
+         * @return True if the key is valid, otherwise false.
+         */
+        static bool validatePrivateKey(string private_key);
     protected:
     private:
         /**

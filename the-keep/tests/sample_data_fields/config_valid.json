@@ -1,0 +1,119 @@
+{
+	"option_lists" : {
+		"Provinces" : [
+			"Alberta",
+			"British Columbia",
+			"Manitoba",
+			"New Brunswick",
+			"Newfoundland and Labrador",
+			"Northwest Territories",
+			"Nova Scotia",
+			"Nunavut",
+			"Ontario",
+			"Prince Edward Island",
+			"Quebec",
+			"Saskatchewan",
+			"Yukon"
+		],
+		"PaymentCards" : [
+			"Visa",
+			"MasterCard",
+			"American Express",
+			"PaySafeCard"
+		]
+	},
+	"constraints" : {
+		"name_FirstName" : {
+			"input_type" : "string",
+			"max_chars" : 40
+		},
+		"name_MiddleName" : {
+			"input_type" : "string",
+			"max_chars" : 40
+		},
+		"name_LastName" : {
+			"input_type" : "string",
+			"max_chars" : 64
+		},
+		"address_StreetAddress" : {
+			"input_type" : "string",
+			"max_chars" : 48
+		},
+		"address_City" : {
+			"input_type" : "string",
+			"max_chars" : 40
+		},
+		"address_Province" : {
+			"input_type" : "options",
+			"options" : "Provinces"
+		},
+		"address_Country" : {
+			"input_type" : "string",
+			"max_chars" : 64
+		},
+		"address_PostalCode" : {
+			"input_type" : "string",
+			"max_chars" : 6
+		},
+		"payment_FirstName" : {
+			"input_type" : "string",
+			"max_chars": 40
+		},
+		"payment_LastName" : {
+			"input_type" : "string",
+			"max_chars" : 64
+		},
+		"payment_CardType" : {
+			"input_type" : "options",
+			"options" : "PaymentCards"
+		},
+		"payment_CardNumber" : {
+			"input_type" : "int",
+			"max_chars" : 18
+		},
+		"payment_ExpirationMonth" : {
+			"input_type" : "int",
+			"max_chars" : 2
+		},
+		"payment_ExpirationYear" : {
+			"input_type" : "int",
+			"max_chars" : 4
+		},
+		"payment_SecurityCode" : {
+			"input_type" : "int",
+			"max_chars" : 3
+		},
+		"billing_FirstName" : {
+			"input_type" : "string",
+			"max_chars": 40
+		},
+		"billing_LastName" : {
+			"input_type" : "string",
+			"max_chars" : 64
+		},
+		"billing_StreetAddress" : {
+			"input_type" : "string",
+			"max_chars" : 48
+		},
+		"billing_City" : {
+			"input_type" : "string",
+			"max_chars" : 40
+		},
+		"billing_Province" : {
+			"input_type" : "options",
+			"options" : "Provinces"
+		},
+		"billing_Country" : {
+			"input_type" : "string",
+			"max_chars" : 64
+		},
+		"billing_PostalCode" : {
+			"input_type" : "string",
+			"max_chars" : 6	
+		},
+		"billing_PhoneNumber" : {
+			"input_type" : "int",
+			"max_chars" : 13
+		}
+	}
+}
