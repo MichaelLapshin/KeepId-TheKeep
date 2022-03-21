@@ -48,10 +48,7 @@ TEST(TestKeyManager, GetPublicKey){
     ASSERT_NO_THROW(KeyManager::initialize());
 
     // Obtains the public key from the file
-    ifstream public_key_file {string("KeepPublicKey.dat")};
-    string str_public_key;
-    str_public_key.assign(istreambuf_iterator<char>(public_key_file),
-                          istreambuf_iterator<char>());
+    string str_public_key = readFile("KeepPublicKey.dat");
 
     // Assert that the public key from the KeyManager matches that of the file
     EXPECT_EQ(KeyManager::getPublicKey(), str_public_key);
