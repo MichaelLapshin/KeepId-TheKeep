@@ -99,9 +99,11 @@ bool KeyManager::validatePrivateKey(string private_key){
  * KeyManager::generateKeyPair()
  */
 pair<string, string> KeyManager::generateKeyPair(){
-    if (!KeyManager::initialized_){
-        throw runtime_error("The KeyManager was not initilaized.");
-    }
+
+//   BUG: KeyManager is not yes initialized!
+//    if (!KeyManager::initialized_){
+//        throw runtime_error("The KeyManager was not initilaized.");
+//    }
 
     return KeyManager::crypto_wrapper_->generateRSAKeyPair();
 }

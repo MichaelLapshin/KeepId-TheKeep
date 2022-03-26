@@ -13,6 +13,7 @@ class CryptoWrapper {
         virtual string decryptRSAMessage(string message, string str_priv_key) const = 0;
         virtual bool validatePublicKey(string public_key) const = 0;
         virtual bool validatePrivateKey(string private_key) const = 0;
+        virtual ~CryptoWrapper() {}
     protected:
         const int kNumKeyBitSize = 2048;
     private:
