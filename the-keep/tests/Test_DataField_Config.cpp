@@ -1,3 +1,10 @@
+/**
+ * @filename: Test_DataField_Config.cpp
+ * @description: To test the Config class for data fields of the Keep.
+ * @author: KeepId
+ * @date: March 27, 2022
+ */
+
 #include <string>
 #include <vector>
 
@@ -9,10 +16,10 @@
 
 using namespace std;
 
-const string kValidConfig = kSampleDataFields + "config_valid.json";
-const string kRandomFile = kSampleDataFields + "random.json";
-const string kInvalidConfig = kSampleDataFields + "invalid_config_jsons/";
-const string kDecryptedData = kSampleDataFields + "decrypted_data_jsons/";
+const string VALID_CONFIG = SAMLE_DATA_FIELDS + "config_valid.json";
+const string RANDOM_FILE = SAMLE_DATA_FIELDS + "random.json";
+const string INVALID_CONFIG = SAMLE_DATA_FIELDS + "invalid_config_jsons/";
+const string DECRYPTED_DATA = SAMLE_DATA_FIELDS + "decrypted_data_jsons/";
 
 /**
  * testConfigInitFail()
@@ -32,7 +39,7 @@ void testConfigInitFail(string file_path){
  */
 TEST(TestDataField_Config, Initialize){
     // Sets up the test
-    copyFile(kValidConfig, DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(VALID_CONFIG, DATA_FIELD_CONFIG_FILE_NAME);
 
     // Tests the initialize() method
     EXPECT_NO_THROW(Config::initialize());
@@ -48,7 +55,7 @@ TEST(TestDataField_Config, Initialize){
  */
 TEST(TestDataField_Config, Initialize_ParsingError){
     // Test that random content would result in a throw.
-    copyFile(kRandomFile, DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(RANDOM_FILE, DATA_FIELD_CONFIG_FILE_NAME);
     EXPECT_THROW(Config::initialize(), runtime_error);
 }
 
@@ -58,47 +65,47 @@ TEST(TestDataField_Config, Initialize_ParsingError){
  */
 TEST(TestDataField_Config, Initialize_ConfigAssertions){
     // Test the reference file
-    copyFile(kInvalidConfig + "config_invalid_valid_reference.json", DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(INVALID_CONFIG + "config_invalid_valid_reference.json", DATA_FIELD_CONFIG_FILE_NAME);
     EXPECT_NO_THROW(Config::initialize());
     EXPECT_NO_THROW(Config::uninitialize());
 
     // Test invalid general config setups   
-    testConfigInitFail(kInvalidConfig + "config_invalid_file_empty.json") ;
-    testConfigInitFail(kInvalidConfig + "config_invalid_unknown_key.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_missing.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_option_lists_missing.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_file_empty.json") ;
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_unknown_key.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_missing.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_option_lists_missing.json");
 
     // Test invalid general constraints setups
-    // testConfigInitFail(kInvalidConfig + "config_invalid_constraints_constraint_duplicate.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_empty.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_not_dictionary.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_unknown_key.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_data_field_not_dictionary.json");
+    // testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_constraint_duplicate.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_empty.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_not_dictionary.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_unknown_key.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_data_field_not_dictionary.json");
     
     // Test invalid constraint input_type setups
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_input_type_invalid_key_word.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_input_type_missing.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_input_type_not_string_type.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_input_type_invalid_key_word.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_input_type_missing.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_input_type_not_string_type.json");
     
     // Test invalid constraint max_chars setups
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_max_chars_missing.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_max_chars_negative.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_max_chars_not_int_type.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_max_chars_not_needed.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_max_chars_zero.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_max_chars_missing.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_max_chars_negative.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_max_chars_not_int_type.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_max_chars_not_needed.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_max_chars_zero.json");
     
     // Test invalid constraint options setups
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_options_invalid_reference.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_options_missing.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_options_not_needed.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_constraints_options_not_string_type.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_options_invalid_reference.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_options_missing.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_options_not_needed.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_constraints_options_not_string_type.json");
     
     // Test invalid constraint option_lists setups
-    // testConfigInitFail(kInvalidConfig + "config_invalid_option_lists_options_content_duplicate.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_option_lists_options_contents_not_string_type.json");
-    // testConfigInitFail(kInvalidConfig + "config_invalid_option_lists_options_duplicate.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_option_lists_options_empty.json");
-    testConfigInitFail(kInvalidConfig + "config_invalid_option_lists_options_is_not_list.json");
+    // testConfigInitFail(INVALID_CONFIG + "config_invalid_option_lists_options_content_duplicate.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_option_lists_options_contents_not_string_type.json");
+    // testConfigInitFail(INVALID_CONFIG + "config_invalid_option_lists_options_duplicate.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_option_lists_options_empty.json");
+    testConfigInitFail(INVALID_CONFIG + "config_invalid_option_lists_options_is_not_list.json");
 }
 
 /**
@@ -109,7 +116,7 @@ TEST(TestDataField_Config, Uninitialize){
     EXPECT_THROW(Config::uninitialize(), runtime_error);
 
     // Test that the Config is correct unintialized when it is initialized.
-    copyFile(kValidConfig, DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(VALID_CONFIG, DATA_FIELD_CONFIG_FILE_NAME);
     EXPECT_NO_THROW(Config::initialize());
     EXPECT_NO_THROW(Config::uninitialize());
 
@@ -131,11 +138,11 @@ TEST(TestDataField_Config, GetOptionLists_Uninitialized){
  */
 TEST(TestDataField_Config, GetOptionLists_Initialized){ 
     // Sets up the test
-    copyFile(kValidConfig, DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(VALID_CONFIG, DATA_FIELD_CONFIG_FILE_NAME);
     Config::initialize();
 
     // Tests that the config output matches what was in the file
-    Json::Value expected = extractJsonValue(kValidConfig);
+    Json::Value expected = extractJsonValue(VALID_CONFIG);
     EXPECT_EQ(expected[OPTION_LISTS], Config::getOptionLists());
 
     // Take down the test
@@ -157,11 +164,11 @@ TEST(TestDataField_Config, GetConstraints_Uninitialized){
  */
 TEST(TestDataField_Config, GetConstraints_Initialized){
     // Sets up the test
-    copyFile(kValidConfig, DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(VALID_CONFIG, DATA_FIELD_CONFIG_FILE_NAME);
     Config::initialize();
 
     // Tests that the config output matches what was in the file
-    Json::Value expected = extractJsonValue(kValidConfig);
+    Json::Value expected = extractJsonValue(VALID_CONFIG);
     EXPECT_EQ(expected[CONSTRAINTS], Config::getConstraints());
 
     // Take down the test
@@ -174,11 +181,11 @@ TEST(TestDataField_Config, GetConstraints_Initialized){
  */
 TEST(TestDataField_Config, ValidateDecryptedDataFields_Invalid){
     // Sets up the test
-    copyFile(kValidConfig, DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(VALID_CONFIG, DATA_FIELD_CONFIG_FILE_NAME);
     Config::initialize();
     
     // Tests
-    EXPECT_TRUE(Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_no_invalid.json")).empty());
+    EXPECT_TRUE(Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_no_invalid.json")).empty());
 
     // Take down the test
     Config::uninitialize();
@@ -190,7 +197,7 @@ TEST(TestDataField_Config, ValidateDecryptedDataFields_Invalid){
  */
 TEST(TestDataField_Config, ValidateDecryptedDataFields_Valid){
     // Sets up the test
-    copyFile(kValidConfig, DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(VALID_CONFIG, DATA_FIELD_CONFIG_FILE_NAME);
     Config::initialize();
 
     // Expected results
@@ -228,13 +235,13 @@ TEST(TestDataField_Config, ValidateDecryptedDataFields_Valid){
 
     // Obtains the invalid data field vectors from sample Json files.
     vector<string>
-    actual_invalid_single_opt_invalid = Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_invalid_single_opt_invalid.json")),
-    actual_invalid_single_str_max_chars = Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_invalid_single_str_max_chars.json")),
-    actual_invalid_single_int_max_chars = Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_invalid_single_int_max_chars.json")),
-    actual_invalid_single_int_str_chars = Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_invalid_single_int_str_chars.json")),
-    actual_invalid_multi_opt_invalid = Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_invalid_multi_opt_invalid.json")),
-    actual_invalid_multi_all = Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_invalid_multi_all.json")),
-    actual_invalid_multi_all_2 = Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_invalid_multi_all_2.json"));
+    actual_invalid_single_opt_invalid = Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_invalid_single_opt_invalid.json")),
+    actual_invalid_single_str_max_chars = Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_invalid_single_str_max_chars.json")),
+    actual_invalid_single_int_max_chars = Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_invalid_single_int_max_chars.json")),
+    actual_invalid_single_int_str_chars = Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_invalid_single_int_str_chars.json")),
+    actual_invalid_multi_opt_invalid = Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_invalid_multi_opt_invalid.json")),
+    actual_invalid_multi_all = Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_invalid_multi_all.json")),
+    actual_invalid_multi_all_2 = Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_invalid_multi_all_2.json"));
 
     // Compares the actual to the expected values
     EXPECT_TRUE(vectorsEquivalentContent(expected_invalid_single_opt_invalid, actual_invalid_single_opt_invalid));
@@ -255,11 +262,11 @@ TEST(TestDataField_Config, ValidateDecryptedDataFields_Valid){
  */
 TEST(TestDataField_Config, ValidateDecryptedDataFields_Error){
     // Test that the method throws with config not initialized
-    EXPECT_THROW(Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_no_invalid.json")), runtime_error);
+    EXPECT_THROW(Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_no_invalid.json")), runtime_error);
     
     // Test that the method throws with config initialized
-    copyFile(kValidConfig, DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(VALID_CONFIG, DATA_FIELD_CONFIG_FILE_NAME);
     Config::initialize();
-    EXPECT_THROW(Config::validateDecryptedDataFields(extractJsonValue(kDecryptedData + "decrypted_data_fields_invalid_names.json")), runtime_error);
+    EXPECT_THROW(Config::validateDecryptedDataFields(extractJsonValue(DECRYPTED_DATA + "decrypted_data_fields_invalid_names.json")), runtime_error);
     Config::uninitialize();
 }

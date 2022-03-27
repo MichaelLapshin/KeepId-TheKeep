@@ -96,7 +96,7 @@ void userDataRequestTask(Json::Value data_request_input){
     }
 
     // Fetch encrypted user data
-    const Json::Value encrytped_data; // = HolyCow.fecthKeepUserData(user_id, data_fields);
+    const Json::Value encrytped_data; // = HolyCow.fetchKeepUserData(user_id, data_fields);
 
     // Decrypt user data
     Json::Value decrypted_data{};

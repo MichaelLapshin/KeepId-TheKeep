@@ -5,8 +5,7 @@
  * @date: February 19, 2022
  */
 
-#ifndef DATA_FIELD_CONFIG
-#define DATA_FIELD_CONFIG
+#pragma once
 
 #include <string>
 #include <vector>
@@ -62,5 +61,3 @@ class Config{
         static inline bool initialized_ = false;
         static inline Json::Value* data_field_config_ = nullptr;
 };
-
-#endif

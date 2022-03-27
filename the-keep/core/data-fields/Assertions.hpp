@@ -5,8 +5,7 @@
  * @date: February 19, 2022
  */
 
-#ifndef DATA_FIELD_ASSERTIONS
-#define DATA_FIELD_ASSERTIONS
+#pragma once
 
 #include <jsoncpp/json/json.h>
 
@@ -63,5 +62,3 @@ class Assertions{
          */
         static void assertValidDataRequest(const Json::Value& data_request_input);  
 };
-
-#endif

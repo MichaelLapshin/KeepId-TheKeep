@@ -5,8 +5,7 @@
  * @date: March 6, 2022
  */
 
-#ifndef HELPER_FUNCTIONS 
-#define HELPER_FUNCTIONS 
+#pragma once
 
 #include <string>
 #include <vector>
@@ -23,5 +22,3 @@ using namespace std;
  * @return The index at which the string was found in the vector, or -1 if none was found.
  */
 int findIndexOfStringInVector(const vector<string>& list, const string& search);
-
-#endif

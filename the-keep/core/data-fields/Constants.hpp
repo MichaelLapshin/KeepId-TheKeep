@@ -6,10 +6,9 @@
  * @date: February 19, 2022
  */
 
-#include <string>
+#pragma once
 
-#if !defined(KEEP_CONSTANTS)
-#define KEEP_CONSTANTS 1
+#include <string>
 
 // Configurations constants
 const std::string DATA_FIELD_CONFIG_FILE_NAME = "data-fields-config.json";
@@ -30,6 +29,3 @@ const std::string MAX_CHARS = "max_chars";
 const std::string OPTIONS = "options";
 const std::string STRING = "string";
 const std::string INTEGER = "int";
-
-#endif
-

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-const string kSampleDataFields = "the-keep/tests/sample_data_fields/";
+const string SAMLE_DATA_FIELDS = "the-keep/tests/sample_data_fields/";
 
 /**
  * readFile()
