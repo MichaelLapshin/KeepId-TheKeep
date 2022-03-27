@@ -1,0 +1,15 @@
+{
+    "name_FirstName" : "Bob",
+    "name_LastName" : "Richards",
+    "address_StreetAddress" : "1 Yonge Street",
+    "address_City" : "Toronto",
+    "address_Province" : "Ontario",
+    "address_Country" : "Canada",
+    "payment_CardType" : "MasterCard",
+    "payment_CardNumber" : "1234567890",
+    "payment_SecurityCode" : "123",
+    "payment_ExpirationYear" : "2032",
+    "payment_ExpirationMonth" : "April",
+    "billing_Country" : "Canada",
+    "billing_PhoneNumber" : "1234567890"
+}

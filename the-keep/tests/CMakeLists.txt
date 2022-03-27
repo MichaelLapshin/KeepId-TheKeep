@@ -5,6 +5,7 @@ add_library(KeepUnitTests OBJECT
     test_common.cpp
     Test_CryptoWrapper_Cryptopp.cpp
     Test_DataField_Assertions.cpp
+    Test_DataField_Config.cpp
     Test_HelperFunctions.cpp
     Test_KeyManager.cpp
     Test_TaskManager.cpp

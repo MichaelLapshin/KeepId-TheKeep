@@ -64,12 +64,16 @@ void Config::uninitialize(){
  * Config::validateDecryptedDataFields()
  */
 vector<string> Config::validateDecryptedDataFields(const Json::Value &data_fields){
+    if (!Config::initialized_){
+        throw runtime_error("Data field configurations were not initialized.");
+    }
+
     Assertions::assertValidDataFields(data_fields.getMemberNames());
 
     // Accumulates the invalid fields
-    vector<string> invalid_fields;
+    vector<string> invalid_fields{};
 
-    Json::Value option_lists = Config::getOptionsList();
+    Json::Value option_lists = Config::getOptionLists();
     Json::Value constraints = Config::getConstraints();
     
     for (const string field : data_fields.getMemberNames()){
@@ -104,7 +108,7 @@ vector<string> Config::validateDecryptedDataFields(const Json::Value &data_field
             // If the field must be an integer, then enforce that constraint
             if (constraints[field][INPUT_TYPE].asString() == INTEGER){
                 for(const char &character : data_fields[field].asString()){
-                    is_valid_option &= isdigit(character);
+                    is_valid_option &= ('0' <= character && character <= '9');
                 }
             }
 
@@ -121,9 +125,9 @@ vector<string> Config::validateDecryptedDataFields(const Json::Value &data_field
 }
 
 /**
- * Config::getOptionsList()
+ * Config::getOptionLists()
  */
-Json::Value Config::getOptionsList(){
+Json::Value Config::getOptionLists(){
     if (!Config::initialized_){
         throw runtime_error("Data field configurations were not initialized.");
     }

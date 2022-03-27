@@ -1,0 +1,16 @@
+{
+    "name_FirstName" : "Bob",
+    "name_LastName" : "Richards",
+    "address_StreetAddress" : "1 Yonge Street",
+    "address_City" : "Toronto",
+    "address_Province" : "Washington",
+    "address_Country" : "Canada",
+    "payment_CardType" : "SomeCard",
+    "payment_CardNumber" : "1234567890",
+    "payment_SecurityCode" : "123",
+    "payment_ExpirationYear" : "2032",
+    "payment_ExpirationMonth" : "08",
+    "billing_Country" : "Canada",
+    "billing_Province" : "alberta",
+    "billing_PhoneNumber" : "1234567890"
+}

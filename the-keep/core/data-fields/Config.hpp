@@ -44,11 +44,11 @@ class Config{
         static vector<string> validateDecryptedDataFields(const Json::Value &data_fields);
 
         /**
-         * Config::getOptionsList()
-         * @brief A getter for the configuration options list.
-         * @return The Json object for the configuration options list.
+         * Config::getOptionLists()
+         * @brief A getter for the configuration option lists.
+         * @return The Json object for the configuration option lists.
          */
-        static Json::Value getOptionsList();
+        static Json::Value getOptionLists();
 
         /**
          * Config::getConstraints()

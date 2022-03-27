@@ -1,0 +1,16 @@
+{
+    "name_FirstName" : "Bob",
+    "name_LastName" : "Richards",
+    "address_StreetAddress" : "1 Yonge Street",
+    "address_City" : "Toronto",
+    "address_Province" : "QuebEc",
+    "address_Country" : "Canada",
+    "payment_CardType" : "SomeCardType",
+    "payment_CardNumber" : "1234y",
+    "payment_SecurityCode" : "12345",
+    "payment_ExpirationYear" : "2032",
+    "payment_ExpirationMonth" : "08",
+    "billing_Country" : "Canada",
+    "billing_StreetAddress" : "one very long street address that is definitely longer than 28 characters.",
+    "billing_PhoneNumber" : "1234567890"
+}

@@ -19,10 +19,6 @@
 
 using namespace std;
 
-/* NOTE: Since we are testing the static class KeyManager, 
- *       then each should be tested individually.
- */
-
 /**
  * Initialize - Test that the KeyManager is properly initialized the first time,
  *              but correctly throws for any subsequent initialization attempts.
