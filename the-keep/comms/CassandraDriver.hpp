@@ -1,3 +1,10 @@
+/**
+ * @filename: CassandraDriver.hpp
+ * @description: Cassandra DB header
+ * @author: KeepId {IL}
+ * @date: March, 2022
+ */
+
 #pragma once
 #include <string>
 #include <cassandra.h>

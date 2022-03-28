@@ -12,6 +12,11 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         libssl-dev \
         zlib1g-dev
 
+# installation of DataStax's cpp-driver Cassandra library
 RUN  cd /tmp && git clone https://github.com/datastax/cpp-driver.git \
      && cd cpp-driver && mkdir build && cd build \
      && cmake .. && make && make install && cd ..
+
+# installation of modern-cpp-kafka Kafka header-only library
+RUN  cd /tmp && git clone https://github.com/morganstanley/modern-cpp-kafka.git \
+     && cd /tmp/modern-cpp-kafka/include && cp -r kafka /usr/local/include

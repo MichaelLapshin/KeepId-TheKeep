@@ -1,8 +1,13 @@
 // #include <stdio>
 
+#include <kafka/KafkaConsumer.h>
+#include <kafka/KafkaProducer.h>
+
+#include "CommsConfig.hpp" // TODO: review location
 #include "KafkaDriver.hpp"
 
 using namespace thekeep;
+//using namespace kafka::clients;
 
 // TODO: add implementation
 

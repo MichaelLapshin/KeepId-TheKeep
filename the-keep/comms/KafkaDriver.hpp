@@ -1,4 +1,11 @@
-// Uses: https://github.com/morganstanley/modern-cpp-kafka
+/**
+ * @filename: KafkaDriver.hpp
+ * @description: Kafka high-level abstraction
+ * @author: KeepId {IL}
+ * @date: March 27, 2022
+ * 
+ * Uses: https://github.com/morganstanley/modern-cpp-kafka (Morgan Stanley)
+ */
 
 #pragma once
 #include <string>

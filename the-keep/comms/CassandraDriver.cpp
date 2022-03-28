@@ -2,6 +2,7 @@
 /* Use "#include <dse.h>" when connecting to DataStax Enterpise */
 #include <stdio.h>
 
+#include "CommsConfig.hpp"
 #include "CassandraDriver.hpp"
 using namespace thekeep;
 
@@ -13,7 +14,7 @@ int CassandraDriver::connect(const string& ip, const string& user, const string&
   //connect_future = NULL;        // CassFuture*
   cluster = cass_cluster_new();  // CassCluster*
   session = cass_session_new(); // CassSession* 
-  char* hosts = "127.0.0.1";   // if (argc > 1) hosts = argv[1]; 
+  const char* hosts = KAFKA_URL.c_str();   // if (argc > 1) hosts = argv[1];  // hardcoded
 
   /* Add contact points */
   cass_cluster_set_contact_points(cluster, hosts);
