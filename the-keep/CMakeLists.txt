@@ -46,8 +46,19 @@ message("CryptoPP library found at: ${CRYPTOPP_PATH}")
 find_library(GOOGLE_TEST_PATH gtest)
 message("Google-Test library found at: ${GOOGLE_TEST_PATH}")
 
+
+
+find_library(RD_KAFKA_PATH rdkafka)
+message("RD-CPP-Kafka library found at: ${RD_KAFKA_PATH}")
+
+find_library(CASSANDRA_DRIVER_PATH cassandra-cpp-driver) # -lcassandra
+message("Cassandra-CPP-Driver found at: ${CASSANDRA_DRIVER_PATH}")
+
+
 ### Adds targets ###
 target_link_libraries(${PROJECT_NAME}
+  rdkafka
+  ${CASSANDRA_DRIVER_PATH}
   jsoncpp
   crypto++
   HelperFunctions
@@ -61,6 +72,8 @@ target_link_libraries(${PROJECT_NAME}
 
 # Adds targets
 target_link_libraries(${PROJECT_NAME}UnitTests
+  rdkafka
+  ${CASSANDRA_DRIVER_PATH}
   jsoncpp
   crypto++
   HelperFunctions

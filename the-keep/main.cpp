@@ -8,7 +8,10 @@
 #include "core/task-manager/TaskManager.hpp"
 #include "core/data-fields/Config.hpp"
 
+#include "comms/KafkaDriver.hpp"
+
 using namespace std;
+using namespace thekeep;
 
 void initialize();
 void uninitialize();
@@ -45,6 +48,14 @@ int main(int argc, char *argv[]){
             cerr << "Invalid command. Enter '--help' for command instructions." << endl;
         }
     }
+
+    // kafka test
+    auto kd = new KafkaDriver();
+    kd->initialize("");
+    kd->send("","");
+
+
+
 
     uninitialize();
     cout << "Exiting the program..." << endl;
