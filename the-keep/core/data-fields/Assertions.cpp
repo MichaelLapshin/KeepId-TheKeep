@@ -20,9 +20,9 @@
 using namespace std;
 
 /**
- * Assertions::assertValidDataFields()
+ * Assertions::assertAreConfigDataFields()
  */
-void Assertions::assertValidDataFields(const vector<string> &data_fields){
+void Assertions::assertAreConfigDataFields(const vector<string> &data_fields){
     if (data_fields.empty()) throw runtime_error("The data fields vector is empty.");
 
     vector<string> valid_data_fields = Config::getConstraints().getMemberNames();
@@ -32,7 +32,6 @@ void Assertions::assertValidDataFields(const vector<string> &data_fields){
             throw runtime_error("The data field '" + member + "' is not valid.");
     }
 }
-
 
 /**
  * Assertions::assertDataFieldConfig()
@@ -107,87 +106,98 @@ void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
     }
 }
 
-
 /**
- * Assertions::assertValidDataUpdate()
+ * Assertions::assertValidRawUpdateJson()
  */
-void Assertions::assertValidDataUpdate(const Json::Value& data_update_input){
+void Assertions::assertValidRawUpdateJson(Json::Value raw_update_json){
     // Checks that the basic members exist
-    if (data_update_input.size() != 2)
-        throw runtime_error("Data update fields are missing or are in excess.");
+    if (raw_update_json.size() != 2)
+        throw runtime_error("Data update json fields are missing or are in excess.");
 
-    if (!data_update_input.isMember(USER_ID) || !data_update_input[USER_ID].isString())
+    if (!raw_update_json.isMember(USER_ID) || !raw_update_json[USER_ID].isString())
         throw runtime_error("Data update is missing the user id.");
     
-    if (!data_update_input.isMember(ENCRYPTED_DATA_FIELDS) || !data_update_input[ENCRYPTED_DATA_FIELDS].isObject())
+    if (!raw_update_json.isMember(ENCRYPTED_DATA_FIELDS) || !raw_update_json[ENCRYPTED_DATA_FIELDS].isString())
         throw runtime_error("Data update is missing the encrypted data fields.");
+}
 
-    // Assert the input encrypted data field follow the expected format
-    Json::Value encrypted_data_fields = data_update_input[ENCRYPTED_DATA_FIELDS];
-    if (encrypted_data_fields.empty()) {
-        throw runtime_error("Data update encrypted data fields member is empty.");
-    }    
-    Assertions::assertValidDataFields(encrypted_data_fields.getMemberNames());
+/**
+ * Assertions::assertValidEncryptedUpdateDataFields()
+ */
+void Assertions::assertValidEncryptedUpdateDataFields(Json::Value encrypted_update_data_fields){
+    // Check that the data fields contains field names
+    // that are present in the configuration file.
+    vector<string> data_fields = encrypted_update_data_fields[EXPECTED_DATA_FIELDS].getMemberNames();
+    Assertions::assertAreConfigDataFields(data_fields);
 
-    for (string &member : encrypted_data_fields.getMemberNames()){
-        if (!encrypted_data_fields[member].isString())
-            throw runtime_error("Data update encrypted data fields member '" + member + "' is not a string.");
+    // Check that the value of each member is a string
+    for (const string& field: data_fields){
+        if (!encrypted_update_data_fields[field].isString())
+            throw runtime_error("The data field " + field + " does not map to a string.");
     }
 }
 
-
 /**
- * Assertions::assertValidDataRequest()
+ * Assertions::assertValidRawRequestJson()
  */
-void Assertions::assertValidDataRequest(const Json::Value &data_request_input){
+void Assertions::assertValidRawRequestJson(Json::Value raw_request_json){
     // Checks that the basic members exist
-    if (data_request_input.size() != 4)
-        throw runtime_error("Data request is missing or does not have all required members.");
+    if (raw_request_json.size() != 5)
+        throw runtime_error("Data request json fields are missing or are in excess.");
 
-    if (!data_request_input.isMember(USER_ID) || !data_request_input[USER_ID].isString())
+    if (!raw_request_json.isMember(REQUEST_ID) || !raw_request_json[REQUEST_ID].isString())
+        throw runtime_error("Data request is missing the request id.");
+
+    if (!raw_request_json.isMember(USER_ID) || !raw_request_json[USER_ID].isString())
         throw runtime_error("Data request is missing the user id.");
     
-    if (!data_request_input.isMember(REQUEST_ID) || !data_request_input[REQUEST_ID].isString())
-        throw runtime_error("Data request is missing the request id.");
-    
-    if (!data_request_input.isMember(PRIVATE_KEYS) || !data_request_input[PRIVATE_KEYS].isObject())
-        throw runtime_error("Data request is missing the private keys.");
-    
-    if (!data_request_input.isMember(PUBLIC_KEYS) || !data_request_input[PUBLIC_KEYS].isObject())
+    if (!raw_request_json.isMember(EXPECTED_DATA_FIELDS) || !raw_request_json[EXPECTED_DATA_FIELDS].isArray())
+        throw runtime_error("Data request is missing the expected data fields.");
+
+    if (!raw_request_json.isMember(PUBLIC_KEYS) || !raw_request_json[PUBLIC_KEYS].isString())
         throw runtime_error("Data request is missing the public keys.");
 
-    // Asserts the input data field configuration constraints
-    Json::Value private_keys = data_request_input[PRIVATE_KEYS];
-    if (private_keys.empty()) {
-        throw runtime_error("The private keys member is empty.");    
-    }
-    Assertions::assertValidDataFields(private_keys.getMemberNames());
+    if (!raw_request_json.isMember(PRIVATE_KEYS) || !raw_request_json[PRIVATE_KEYS].isString())
+        throw runtime_error("Data request is missing the private keys.");
 
-    for (const string &member : private_keys.getMemberNames()){
-        if (!private_keys[member].isString())
-            throw runtime_error("Data request private key for data field'" + member + "' is not a string.");
-    }
+    // Check that the expected data fields contains field names
+    // that are present in the configuration file.
+    vector<string> expected_data_fields = raw_request_json[EXPECTED_DATA_FIELDS].getMemberNames();
+    Assertions::assertAreConfigDataFields(expected_data_fields);
+}
 
-    // Asserts the input data field configuration constraints
-    Json::Value public_keys = data_request_input[PUBLIC_KEYS];
-    if (public_keys.empty()) {
-        throw runtime_error("The public keys member is empty.");    
-    }
-    Assertions::assertValidDataFields(public_keys.getMemberNames());
+/**
+ * Assertions::assertValidKeysJsonFormat()
+ */
+void Assertions::assertValidKeysJsonFormat(Json::Value keys_json){
+    // Check that the json is an object
+    if (!keys_json.isObject())
+        throw runtime_error("The keys json is not an object.");
 
-    for (const string &member : public_keys.getMemberNames()){
-        if (!public_keys[member].isString())
-            throw runtime_error("Data request public key for data field'" + member + "' is not a string.");
-    }
+    // Validate that all of the data-field names are within the config file
+    vector<string> data_fields = keys_json.getMemberNames();
+    Assertions::assertAreConfigDataFields(data_fields);
 
-    // Asserts that both private keys and public keys are for the same fields
-    for (const string &priv_key : private_keys.getMemberNames()){
-        if (findIndexOfStringInVector(public_keys.getMemberNames(), priv_key) == -1)
-            throw runtime_error("The private key data field '" + priv_key + "' cannot be matched any public key.");
+    // Check that each member maps to an string
+    for(const string& field: data_fields){
+        if (!keys_json[field].isString())
+            throw runtime_error("The keys data field " + field + " does not map to a string.");
     }
+}
 
-    for (const string &publ_key : public_keys.getMemberNames()){
-        if (findIndexOfStringInVector(private_keys.getMemberNames(), publ_key) == -1)
-            throw runtime_error("The public key data field '" + publ_key + "' cannot be matched any private key.");
+/**
+ * Assertions::assertMatchingStringElements()
+ */
+void Assertions::assertMatchingStringElements(vector<string> expected, vector<string> actual){
+    if (expected.size() != actual.size()){
+        throw runtime_error("The string vectors are not of the same length.");
+    }    
+    
+    // Checks that each element from expected exists in actual
+    for (const string& element: expected){       
+        // Throw if an element of exepcted was not found in actual
+        if (findIndexOfStringInVector(actual, element) == -1){
+            throw runtime_error("An expected string element did not appear in the actual string vector.");
+        }
     }
 }

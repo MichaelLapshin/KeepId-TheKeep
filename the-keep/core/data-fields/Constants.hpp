@@ -17,6 +17,7 @@ const std::string CONSTRAINTS = "constraints";
 
 // Data transmission constants
 const std::string ENCRYPTED_DATA_FIELDS = "encrypted_data_fields";
+const std::string EXPECTED_DATA_FIELDS = "expected_data_fields";
 
 // Data field constants
 const std::string USER_ID = "user_id";

@@ -1,0 +1,18 @@
+{
+    "user_id" : "KEEP_ENCRYPTED_USER_ID",
+    "request_id" : "KEEP_ENCRYPTED_REQUEST_ID",
+    "private_keys" : {
+        "keep_encrypted_data_field_1": "KEEP_ENCRYPTED_PRIVATE_KEY_1",
+        "keep_encrypted_data_field_2": "KEEP_ENCRYPTED_PRIVATE_KEY_2",
+        "keep_encrypted_data_field_3": "KEEP_ENCRYPTED_PRIVATE_KEY_3",
+        "keep_encrypted_data_field_4": "KEEP_ENCRYPTED_PRIVATE_KEY_4",
+        "keep_encrypted_data_field_5": "KEEP_ENCRYPTED_PRIVATE_KEY_5"
+    },
+    "public_keys" : {
+        "keep_encrypted_data_field_1": "KEEP_ENCRYPTED_PUBLIC_KEY_1",
+        "keep_encrypted_data_field_2": "KEEP_ENCRYPTED_PUBLIC_KEY_2",
+        "keep_encrypted_data_field_3": "KEEP_ENCRYPTED_PUBLIC_KEY_3",
+        "keep_encrypted_data_field_4": "KEEP_ENCRYPTED_PUBLIC_KEY_4",
+        "keep_encrypted_data_field_5": "KEEP_ENCRYPTED_PUBLIC_KEY_5"
+    }
+}

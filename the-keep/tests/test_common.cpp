@@ -65,11 +65,11 @@ Json::Value extractJsonValue(string file_path){
  */
 bool vectorsEquivalentContent(vector<string> v1, vector<string> v2){
     bool is_equal = (v1.size() == v2.size());
-    for (auto e1 : v1){
+    for (string e1 : v1){
         
-        // Checks than an element from v1 exists in v2
+        // Checks that an element from v1 exists in v2
         bool exists = false;
-        for (auto e2 : v2){
+        for (string e2 : v2){
             if (e1 == e2){
                 exists = true;
                 break;
