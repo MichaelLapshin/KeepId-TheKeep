@@ -29,6 +29,7 @@ int CassandraDriver::connect(const string& ip, const string& user, const string&
     //....
   }
 
+  return 0;
 }
 //
 void CassandraDriver::disconnect() {
@@ -86,10 +87,11 @@ if (cass_future_error_code(connect_future) == CASS_OK) {
     fprintf(stderr, "Unable to connect: '%.*s'\n", (int)message_length, message);
   }
 
+  return 0;
 }
 
 int CassandraDriver::put(const string& userid, const string& fieldid, const string& value) {
   // TODO:
-
+  return 0;
 }
 

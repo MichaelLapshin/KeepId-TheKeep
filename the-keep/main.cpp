@@ -21,6 +21,16 @@ int main(int argc, char *argv[]){
     initialize();
     TaskManager worker{};
 
+    // test 
+    KafkaDriver kd;
+    kd.initialize("");
+    kd.send("keepid-tests","test-c++");
+
+    string ss;
+    ss = kd.receive("keepid-tests",10);
+
+    cout << ss << endl;
+
     // Starts the command line interface
     bool is_running = true;
     while(is_running){
@@ -50,9 +60,9 @@ int main(int argc, char *argv[]){
     }
 
     // kafka test
-    auto kd = new KafkaDriver();
-    kd->initialize("");
-    kd->send("","");
+    // auto kd = new KafkaDriver();
+    // kd->initialize("");
+    // kd->send("","");
 
 
 
