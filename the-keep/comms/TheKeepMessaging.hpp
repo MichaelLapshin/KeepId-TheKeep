@@ -15,7 +15,7 @@ class TheKeepMessaging {
         void (*error_handler)() = nullptr; // async callback
         
     public:
-        virtual ~TheKeepMessaging() = 0;
+        virtual ~TheKeepMessaging(){}; // just a dummy for proper child destruction
         virtual void initialize(const string& server_url) = 0;
         virtual void subscribe(const string& topic) = 0;        
         virtual void subscribe(const set<string>& topics) = 0;        

@@ -6,7 +6,6 @@
  * 
  * Uses: https://github.com/morganstanley/modern-cpp-kafka (Morgan Stanley)
  */
-
 #pragma once
 #include <kafka/KafkaConsumer.h>
 #include <kafka/KafkaProducer.h>
@@ -21,6 +20,7 @@ namespace thekeep {
 class KafkaDriver : public TheKeepMessaging {
         unique_ptr<kafka::clients::KafkaProducer> producer;
         unique_ptr<kafka::clients::KafkaConsumer> consumer;
+        mutex      kafka_mutex;  // for error preservation
         kafka::Error lasterror; // Kafka last error; naive approach for now: clean after read
     public:
         KafkaDriver() {}

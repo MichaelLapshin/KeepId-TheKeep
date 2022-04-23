@@ -95,7 +95,7 @@ void userDataRequestTask(Json::Value data_request_input){
         // OutputMessageClient.forwardInvalidDataKeys(request_id, invalid_fields);
     }
 
-    // Fetch encrypted user data
+    // Fetch encrypted user data from a database/HolyCow
     const Json::Value encrytped_data; // = HolyCow.fecthKeepUserData(user_id, data_fields);
 
     // Decrypt user data

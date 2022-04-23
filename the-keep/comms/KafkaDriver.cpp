@@ -1,9 +1,16 @@
-// #include <stdio>
+/**
+ * @filename: KafkaDriver.cpp
+ * @description: Kafka high-level abstraction
+ * @author: KeepId {IL}
+ * @date: March 27, 2022
+ * 
+ * Uses: https://github.com/morganstanley/modern-cpp-kafka (Morgan Stanley)
+ */
 #include <kafka/Types.h>
 #include <kafka/KafkaConsumer.h>
 #include <kafka/KafkaProducer.h>
 
-#include "CommsConfig.hpp" // TODO: review location
+#include "CommsConfig.hpp"
 #include "KafkaDriver.hpp"
 
 using namespace kafka;
@@ -75,6 +82,7 @@ int KafkaDriver::send(const string& topic, const string& message)
                                 // DEBUG: to add logging
                                 std::cout << "% Message delivered: " << metadata.toString() << std::endl;
                             } else {
+                                scoped_lock(this->kafka_mutex);
                                 this->lasterror = error;
                                 // DEBUG: to add logging
                                 std::cerr << "% Message delivery failed: " << error.message() << std::endl;
@@ -113,7 +121,8 @@ queue<string> KafkaDriver::receive(const string& topic, int timeoutms)
             results.push(record.value().toString());
         } else {
             // TODO: add an exception?
-            std::cerr << record.toString() << std::endl;
+            cerr << record.toString() << endl;
+            lock_guard<mutex> lk(kafka_mutex);
             lasterror = record.error(); // passive reporting
         }
     }
@@ -126,6 +135,7 @@ string KafkaDriver::last_error()
 {
     if(lasterror)
     {
+        lock_guard<mutex> lk(kafka_mutex);
         string e = lasterror.toString();
         lasterror=Error();
         return e;
