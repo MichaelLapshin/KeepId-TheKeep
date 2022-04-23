@@ -5,8 +5,6 @@
  * @date: March 15, 2022
  */
 
-#pragma once
-
 #include <string>
 #include <cstdlib>
 #include <iostream>
