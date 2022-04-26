@@ -55,7 +55,7 @@ void KafkaDriver::subscribe(const set<string>& topics)
 
 void KafkaDriver::unsubscribe(const string& topic)
 {
-    consumer->unsubscribe(); // from all subscribers??
+    consumer->unsubscribe(); // Unsubscribe from the current subscription set.
 }
 
 /**

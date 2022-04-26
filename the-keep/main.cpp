@@ -26,7 +26,8 @@ int main(int argc, char *argv[]){
     initialize();
     TaskManager worker{};
 
-    // test 
+    // Development test 
+/*
     unique_ptr<TheKeepMessaging> kd = make_unique<KafkaDriver>();
     kd->initialize("");
     kd->subscribe("keepid-tests");
@@ -43,6 +44,7 @@ int main(int argc, char *argv[]){
                messages.pop();
         }
     }
+*/
 
     // Starts the command line interface
     bool is_running = true;

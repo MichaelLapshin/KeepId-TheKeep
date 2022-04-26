@@ -1,6 +1,5 @@
-#include <cassandra.h>
-/* Use "#include <dse.h>" when connecting to DataStax Enterpise */
 #include <stdio.h>
+#include <cassandra.h>
 
 #include "CommsConfig.hpp"
 #include "CassandraDriver.hpp"
@@ -31,6 +30,7 @@ int CassandraDriver::connect(const string& ip, const string& user, const string&
 
   return 0;
 }
+
 //
 void CassandraDriver::disconnect() {
   cass_future_free(connect_future);
@@ -94,4 +94,3 @@ int CassandraDriver::put(const string& userid, const string& fieldid, const stri
   // TODO:
   return 0;
 }
-
