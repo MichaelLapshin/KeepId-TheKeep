@@ -1,0 +1,11 @@
+{
+    "user_id" : "MICHAEL",
+    "encrypted_data_fields" : {
+        "name_FirstName" : "encrypted_FirstName",
+        "name_LastName" : "encrypted_LastName",
+        "payment_CardNumber" : "encrypted_CardNumber",
+        "payment_ExpirationMonth" : "encrypted_ExpirationMonth",
+        "payment_ExpirationYear" : "encrypted_ExpirationYear",
+        "payment_SecurityCode" : "encrypted_SecurityCode"
+    }
+}

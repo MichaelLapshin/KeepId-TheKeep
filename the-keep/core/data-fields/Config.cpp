@@ -68,7 +68,7 @@ vector<string> Config::validateDecryptedDataFields(const Json::Value &data_field
         throw runtime_error("Data field configurations were not initialized.");
     }
 
-    Assertions::assertValidDataFields(data_fields.getMemberNames());
+    Assertions::assertAreConfigDataFields(data_fields.getMemberNames());
 
     // Accumulates the invalid fields
     vector<string> invalid_fields{};

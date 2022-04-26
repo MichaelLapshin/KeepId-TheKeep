@@ -11,6 +11,7 @@
 
 #include <jsoncpp/json/json.h>
 
+#include "../HelperFunctions.hpp"
 #include "../key-manager/KeyManager.hpp"
 #include "../data-fields/Assertions.hpp"
 #include "../data-fields/Constants.hpp"
@@ -19,28 +20,28 @@
 using namespace std;
 
 // Function declaration
-void workLoop(atomic<bool> &loop_thread);
-void userDataUpdateTask(Json::Value data_update_input);
-void userDataRequestTask(Json::Value data_request_input);
+void workLoop(const atomic<bool> &loop_thread);
+void userDataUpdateTask(const string& data_update_input);
+void userDataRequestTask(const string& data_request_input);
 
 /**
  * workLoop()
  * @brief The method that would be run whenever
  *        the task manager is started.
  */
-void workLoop(atomic<bool> &loop_thread){
+void workLoop(const atomic<bool> &loop_thread){
     while(loop_thread){
         /////////////////////////////////////////////
         ///  Poll and execute user-data updating  ///
         /////////////////////////////////////////////
-        Json::Value data_update_json; // = MessageClient.PollFetchDataUpdate() // Contains user_id, encrypted_data_fields
-        userDataUpdateTask(data_update_json);
+        const string data_update_str_json; // = MessageClient.PollFetchDataUpdate() // Contains user_id, encrypted_data_fields
+        userDataUpdateTask(data_update_str_json);
 
         /////////////////////////////////////////////
         ///     Poll and execute data-request     ///
         /////////////////////////////////////////////
-        const Json::Value data_request_input; // = MessageClient.fetchUserDataRequest() // Contains user_id, request_id, private_keys, public_keys
-        userDataRequestTask(data_request_input);
+        const string data_request_str_json; // = MessageClient.fetchUserDataRequest() // Contains user_id, request_id, private_keys, public_keys
+        userDataRequestTask(data_request_str_json);
     }
 }
 
@@ -50,14 +51,20 @@ void workLoop(atomic<bool> &loop_thread){
  * 
  * @param[in] data_update_input The data to update the database with.
  */
-void userDataUpdateTask(Json::Value data_update_input){
-    Assertions::assertValidDataUpdate(data_update_input);
+void userDataUpdateTask(const string& raw_data_update_str){
+    // Obtains the raw data
+    const Json::Value& raw_data_update_json = parseJsonString(raw_data_update_str);
+    Assertions::assertValidRawUpdateJson(raw_data_update_json);
+    const string& user_id = raw_data_update_json[USER_ID].asString();
+    const string& keep_encrypted_data_fields = raw_data_update_json[ENCRYPTED_DATA_FIELDS].asString();
 
-    // Constants
-    const string &user_id = data_update_input[USER_ID].asString();
-    const Json::Value &encrypted_data_fields = data_update_input[ENCRYPTED_DATA_FIELDS];
+    // Decrypts and validates the encrypted data fields
+    const string& keep_decrypted_data_fields = KeyManager::decryptMessage(keep_encrypted_data_fields);
+    const Json::Value& encrypted_data_fields_json = parseJsonString(keep_decrypted_data_fields);
+    Assertions::assertValidEncryptedUpdateDataFields(encrypted_data_fields_json);
 
-    // HolyCow.storeUserData(user_id, encrypted_data); 
+    // Updates the Keep's database
+    // HolyCow.storeUserData(user_id, encrypted_data_fields_json); 
 }
 
 /**
@@ -66,86 +73,102 @@ void userDataUpdateTask(Json::Value data_update_input){
  * 
  * @param[in] data_request_input The data request input Json.
  */
-void userDataRequestTask(Json::Value data_request_input){
-    Assertions::assertValidDataRequest(data_request_input);  
+// void userDataRequestTask(Json::Value data_request_input){
+void userDataRequestTask(const string& raw_data_request_str){
+    ////////////////////////////////////////////////////
+    // Parse and Validate the Input
+    ////////////////////////////////////////////////////
+    // Parses and validates the raw data request form
+    const Json::Value& raw_data_request_json = parseJsonString(raw_data_request_str);
+    Assertions::assertValidRawRequestJson(raw_data_request_json);
 
-    // Constants
-    const vector<string> &data_fields = data_request_input[PUBLIC_KEYS].getMemberNames();
-    const string &user_id = data_request_input[USER_ID].asString();
-    const string &request_id = data_request_input[REQUEST_ID].asString();
-    
-    // Decrypts the given public and private keys using the Keep's private key
-    vector<string> invalid_keys;
-    Json::Value public_keys, private_keys;
-    for(const string field : data_fields){
-        string public_key = KeyManager::decryptMessage(data_request_input[PUBLIC_KEYS].asString());
-        string private_key = KeyManager::decryptMessage(data_request_input[PRIVATE_KEYS].asString());
+    // Parses the unencrypted entries
+    const string& user_id = raw_data_request_json[USER_ID].asString();
+    const string& request_id = raw_data_request_json[REQUEST_ID].asString();
 
-        // Ensures that the given keys are valid
-        if (!KeyManager::validatePublicKey(public_key) || !KeyManager::validatePrivateKey(private_key)){
-            invalid_keys.push_back(field);
-        }else{
-            public_keys[field] = public_key;
-            private_keys[field] = private_key;  
+    const int num_expected_data_fields = raw_data_request_json[EXPECTED_DATA_FIELDS].size();
+    vector<string> expected_data_fields = raw_data_request_json[EXPECTED_DATA_FIELDS].getMemberNames();
+    // vector<string> expected_data_fields(num_expected_data_fields);
+    // for (int index = 0; index < num_expected_data_fields; index++){
+    //     expected_data_fields[index] = raw_data_request_json[EXPECTED_DATA_FIELDS][index].asString();
+    // }
+
+    // Decrypts and records the public keys
+    const string& keep_encrypted_public_keys = raw_data_request_json[PUBLIC_KEYS].asString();
+    const string& keep_decrypted_public_keys = KeyManager::decryptMessage(keep_encrypted_public_keys);
+    const Json::Value public_keys = parseJsonString(keep_decrypted_public_keys);
+
+    // Decrypts and records the private keys
+    const string& keep_encrypted_private_keys = raw_data_request_json[PUBLIC_KEYS].asString();
+    const string& keep_decrypted_private_keys = KeyManager::decryptMessage(keep_encrypted_private_keys);
+    const Json::Value& private_keys = parseJsonString(keep_decrypted_private_keys);
+
+    // Assert that the given information is valid
+    Assertions::assertAreConfigDataFields(expected_data_fields);
+    Assertions::assertValidKeysJsonFormat(public_keys);
+    Assertions::assertValidKeysJsonFormat(private_keys);
+    Assertions::assertMatchingStringElements(expected_data_fields, public_keys.getMemberNames()); 
+    Assertions::assertMatchingStringElements(expected_data_fields, private_keys.getMemberNames());
+    // TODO, at this moment, all public/private keys are assumed to be for exactly the expected data fields
+
+    // Validate the public and private keys
+    for (const string& field: expected_data_fields){
+        if (!KeyManager::validatePublicKey(public_keys[field].asString())){
+            throw runtime_error("A public key could not be validated.");
+        }else if (!KeyManager::validatePrivateKey(private_keys[field].asString())){
+            throw runtime_error("A private key could not be validated.");
         }
     }
 
-    if (!invalid_keys.empty()){
-        // Forwards the error message if keys are invalid
-        // OutputMessageClient.forwardInvalidDataKeys(request_id, invalid_fields);
-    }
-
-    // Fetch encrypted user data
+    ////////////////////////////////////////////////////
+    // Re-encrypte the Keep's Data
+    ////////////////////////////////////////////////////
     const Json::Value encrytped_data; // = HolyCow.fetchKeepUserData(user_id, data_fields);
+    Json::Value decrypted_data;
+    Json::Value reencrypted_data;
 
-    // Decrypt user data
-    Json::Value decrypted_data{};
-    for(const string &field : data_fields){
+    for (const string &field : expected_data_fields){
+        // Decrypts the data
         decrypted_data[field] = KeyManager::decryptMessage(encrytped_data[field].asString(),
                                                            private_keys[field].asString());
-    }
-    Assertions::assertValidDataFields(decrypted_data.getMemberNames());
-
-    // Reencrypts the data
-    Json::Value reencrypted_data{};
-    for(const string &field : data_fields){
+        // Re-encrypts the data
         reencrypted_data[field] = KeyManager::encryptMessage(decrypted_data[field].asString(),
                                                              public_keys[field].asString());
     }
-    Assertions::assertValidDataFields(reencrypted_data.getMemberNames());
 
-    // Stores the reencrypted data
-    Json::Value data_update_input;
-    data_update_input[USER_ID] = user_id;
-    data_update_input[ENCRYPTED_DATA_FIELDS] = reencrypted_data;
-    userDataUpdateTask(data_update_input); // Sends user_id, encrypted_data_fields
+    // Updates the Keep's database
+    // HolyCow.storeUserData(user_id, reencrypted_data); 
 
-    // Validates the decrypted data
+    ////////////////////////////////////////////////////
+    // Validate the Decrypted Data Fields
+    ////////////////////////////////////////////////////
     const vector<string> &invalid_fields = Config::validateDecryptedDataFields(decrypted_data);
-
-    if (invalid_fields.empty()){
-        // Generates key pair
-        pair<string, string> transmission_key_pair = KeyManager::generateKeyPair();
-        string company_public_key = transmission_key_pair.first;
-        string company_private_key = transmission_key_pair.second;
-        
-        // Encrypts the data with the company's key
-        Json::Value company_encrypted_data{};
-        for(const string &field : data_fields){
-            string company_encrypted_message = KeyManager::encryptMessage(decrypted_data[field].asString(),
-                                                                            company_public_key);
-            company_encrypted_data[field] = company_encrypted_message;
-        }
-        Assertions::assertValidDataFields(company_encrypted_data.getMemberNames());
-
-        // Forwards the company encrypted data
-        // OutputMessageClient.forwardCompanyEncryptedData(request_id, company_encrypted_data);
-
-        // Forwards the private key
-        // OutputMessageClient.forwardCompanyPrivateKey(request_id, string private_key);
-
-    }else{
-        // Forwards the error message
+    if (!invalid_fields.empty()){
+        throw runtime_error("There are invalid data fields.");
+        // Send an error message to the user
         // OutputMessageClient.forwardInvalidUserDataFields(request_id, invalid_fields);
     }
+
+    ////////////////////////////////////////////////////
+    // Prepare and Forward User Data to Client Company
+    ////////////////////////////////////////////////////
+    // Generating temporary keys (for the client company)
+    pair<string, string> key_pair = KeyManager::generateKeyPair();
+    const string& temp_public_key = key_pair.first;
+    const string& temp_private_key = key_pair.second;
+
+    // Prepares the user data to send to the client company
+    Json::Value data_to_forward;
+    for (const string& field: expected_data_fields){
+        data_to_forward[field] = decrypted_data[field].asString();
+    }
+
+    const string& encrypted_data_to_forward = KeyManager::encryptMessage(data_to_forward.asString(),
+                                                                         temp_public_key);
+
+    // Forwards the company encrypted data
+    // OutputMessageClient.forwardCompanyEncryptedData(request_id, encrypted_data_to_forward);
+
+    // Forwards the private key
+    // OutputMessageClient.forwardCompanyPrivateKey(request_id, temp_private_key);
 }
