@@ -112,8 +112,8 @@ pair<string, string> KeyManager::generateKeyPair(){
  * KeyManager::areKeysInStrage()
  */
 bool KeyManager::areKeysInStorage(){
-    return filesystem::exists(KeyManager::kPublicKeyFile)
-        && filesystem::exists(KeyManager::kPrivateKeyFile);
+    return filesystem::exists(KeyManager::PUBLIC_KEY_FILE)
+        && filesystem::exists(KeyManager::PRIVATE_KEY_FILE);
 }
 
 /**
@@ -121,12 +121,12 @@ bool KeyManager::areKeysInStorage(){
  */
 void KeyManager::writeKeysToStorage(){
     // Saves public key
-    ofstream public_key_file {KeyManager::kPublicKeyFile};
+    ofstream public_key_file {KeyManager::PUBLIC_KEY_FILE};
     public_key_file << KeyManager::public_key_;
     public_key_file.close();
 
     // Saves private key
-    ofstream private_key_file {KeyManager::kPrivateKeyFile};
+    ofstream private_key_file {KeyManager::PRIVATE_KEY_FILE};
     private_key_file << KeyManager::private_key_;
     private_key_file.close();
 }
@@ -136,7 +136,7 @@ void KeyManager::writeKeysToStorage(){
  */
 void KeyManager::readKeysFromStorage(){
     // Read public key
-    ifstream public_key_file {KeyManager::kPublicKeyFile};
+    ifstream public_key_file {KeyManager::PUBLIC_KEY_FILE};
     KeyManager::public_key_.assign(
             istreambuf_iterator<char>(public_key_file),
             istreambuf_iterator<char>());
@@ -145,7 +145,7 @@ void KeyManager::readKeysFromStorage(){
     
 
     // Read private key
-    ifstream private_key_file {KeyManager::kPrivateKeyFile};
+    ifstream private_key_file {KeyManager::PRIVATE_KEY_FILE};
     KeyManager::private_key_.assign(
             istreambuf_iterator<char>(private_key_file),
             istreambuf_iterator<char>());

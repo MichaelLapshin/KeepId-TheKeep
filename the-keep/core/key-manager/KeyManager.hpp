@@ -5,8 +5,7 @@
  * @date: February 3, 2022
  */
 
-#ifndef KEY_MANAGER
-#define KEY_MANAGER
+#pragma once
 
 #include <string>
 
@@ -107,8 +106,8 @@ class KeyManager {
         static void readKeysFromStorage();
 
         // File constants
-        inline static const string kPublicKeyFile = "KeepPublicKey.dat";
-        inline static const string kPrivateKeyFile = "KeepPrivateKey.dat";
+        inline static const string PUBLIC_KEY_FILE = "KeepPublicKey.dat";
+        inline static const string PRIVATE_KEY_FILE = "KeepPrivateKey.dat";
 
         // RSA key pair variables in DER format
         inline static string public_key_ = "";
@@ -118,5 +117,3 @@ class KeyManager {
         inline static CryptoWrapper* crypto_wrapper_ = nullptr;
         inline static bool initialized_ = false;
 };
-
-#endif

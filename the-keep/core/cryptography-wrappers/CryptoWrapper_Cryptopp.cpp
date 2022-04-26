@@ -1,3 +1,9 @@
+/**
+ * @filename: CryptoWrapper_Cryptopp.cpp
+ * @description: Class definition for implementing the main cryptography functions using Crypto++
+ * @author: KeepId
+ * @date: February 5, 2022
+ */
 
 #include <crypto++/rsa.h>
 #include <crypto++/osrng.h>
@@ -18,7 +24,7 @@ pair<string, string> CryptoWrapper_Cryptopp::generateRSAKeyPair() const {
 
     // Creates public/private keys
     RSA::PrivateKey private_key;
-    private_key.GenerateRandomWithKeySize(random_gen, kNumKeyBitSize);
+    private_key.GenerateRandomWithKeySize(random_gen, ENCRYPTION_KEY_BIT_SIZE);
     RSA::PublicKey public_key(private_key);
 
     // Validates the keys to the maximum level

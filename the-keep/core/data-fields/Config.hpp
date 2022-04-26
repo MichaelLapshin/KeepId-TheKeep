@@ -5,8 +5,7 @@
  * @date: February 19, 2022
  */
 
-#ifndef DATA_FIELD_CONFIG
-#define DATA_FIELD_CONFIG
+#pragma once
 
 #include <string>
 #include <vector>
@@ -44,11 +43,11 @@ class Config{
         static vector<string> validateDecryptedDataFields(const Json::Value &data_fields);
 
         /**
-         * Config::getOptionsList()
-         * @brief A getter for the configuration options list.
-         * @return The Json object for the configuration options list.
+         * Config::getOptionLists()
+         * @brief A getter for the configuration option lists.
+         * @return The Json object for the configuration option lists.
          */
-        static Json::Value getOptionsList();
+        static Json::Value getOptionLists();
 
         /**
          * Config::getConstraints()
@@ -62,5 +61,3 @@ class Config{
         static inline bool initialized_ = false;
         static inline Json::Value* data_field_config_ = nullptr;
 };
-
-#endif

@@ -5,9 +5,9 @@
  * @date: March 6, 2022
  */
 
-#include "../core/HelperFunctions.hpp"
-
 #include <gtest/gtest.h>
+
+#include "../core/HelperFunctions.hpp"
 
 using namespace std;
 

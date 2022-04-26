@@ -1,0 +1,11 @@
+{
+    "user_id" : "KEEP_ENCRYPTED_USER_ID",
+    "encrypted_data_fields" : {
+        "keep_encrypted_data_field_1" : "KEEP_ENCRYPTED_DATA_FIELD_CONTENT_1",
+        "keep_encrypted_data_field_2" : "KEEP_ENCRYPTED_DATA_FIELD_CONTENT_2",
+        "keep_encrypted_data_field_3" : "KEEP_ENCRYPTED_DATA_FIELD_CONTENT_3",
+        "keep_encrypted_data_field_4" : "KEEP_ENCRYPTED_DATA_FIELD_CONTENT_4",
+        "keep_encrypted_data_field_5" : "KEEP_ENCRYPTED_DATA_FIELD_CONTENT_5",
+        "keep_encrypted_data_field_6" : "KEEP_ENCRYPTED_DATA_FIELD_CONTENT_6"
+    }
+}

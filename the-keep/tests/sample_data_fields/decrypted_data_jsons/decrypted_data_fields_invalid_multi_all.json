@@ -1,0 +1,17 @@
+{
+    "name_FirstName" : "Bob",
+    "name_MiddleName" : "some very long middle name that is especially longer than 40 characters.",
+    "name_LastName" : "Richards",
+    "address_StreetAddress" : "1 Yonge Street",
+    "address_City" : "another very long string that is supposed to be a city.",
+    "address_Province" : "Ontario",
+    "address_Country" : "Canada",
+    "payment_CardType" : "MasterCard",
+    "payment_CardNumber" : "1234567890",
+    "payment_SecurityCode" : "123",
+    "payment_ExpirationYear" : "20025",
+    "payment_ExpirationMonth" : "08",
+    "billing_Country" : "Canada",
+    "billing_Province" : "ontario",
+    "billing_PhoneNumber" : "1234567890"
+}

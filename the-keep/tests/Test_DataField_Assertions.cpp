@@ -1,3 +1,10 @@
+/**
+ * @filename: Test_DataField_Assertions.cpp
+ * @description: To test the Assertions class for data fields of the Keep.
+ * @author: KeepId
+ * @date: March 27, 2022
+ */
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -11,68 +18,44 @@
 
 using namespace std;
 
-const string SMPL_DF_CNFG = "the-keep/tests/sample_data_fields/";
-const string INVALID_CONFIG = SMPL_DF_CNFG + "invalid_config_jsons/";
-const string INVALID_REQUEST = SMPL_DF_CNFG + "invalid_request_jsons/";
-const string INVALID_UPDATE = SMPL_DF_CNFG + "invalid_update_jsons/";
+const string INVALID_CONFIG = SAMLE_DATA_FIELDS + "invalid_config_jsons/";
+const string INVALID_REQUEST = SAMLE_DATA_FIELDS + "invalid_request_jsons/";
+const string INVALID_UPDATE = SAMLE_DATA_FIELDS + "invalid_update_jsons/";
 
 /**
- * extractJsonValue()
- * @brief Reads and records the json structure found within the file
- *        into a Json::Value object.
- * 
- * @param[in] file_path The file to read from.
- * 
- * @return The json value representing the json structure within the file.
+ * Test_ValidJsons - Test that a valid data field Jsons do not cause
+ *                   any error to occur when being asserted for correctness.
  */
-Json::Value extractJsonValue(string file_path){
-    try{
-        // Reads and returns a Json::Value based on the file contents
-        ifstream file_input_stream(file_path);
-        Json::Value extracted_json;
-        Json::CharReaderBuilder json_builder;
-        string err_msg;
-        bool parse_success = Json::parseFromStream(json_builder, file_input_stream, &extracted_json, &err_msg);
-        return extracted_json;
-    }catch(...){
-        // Kills the test if the file contents cannot be read
-        assert(false);
-        return Json::Value();
-    }
-} 
+TEST(TestDataField_Assertions, Test_ValidJsons){
+    // Test that the configuration file is correct
+    Json::Value data_field_config = extractJsonValue(SAMLE_DATA_FIELDS + "config_valid.json");
+    EXPECT_NO_THROW(Assertions::assertDataFieldConfig(data_field_config));
 
-/**
- * Test_ValidConfigFile - Test that a valid data field config files does not cause
- *                        any error to occur when being asserted for correctness.
- */
-TEST(TestDataField_Assertions, Test_ValidConfigFile){
     // Sets up the test
-    copyFile(SMPL_DF_CNFG + "config_valid.json", DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(SAMLE_DATA_FIELDS + "config_valid.json", DATA_FIELD_CONFIG_FILE_NAME);
     Config::initialize();
 
     // Create test objects
     vector<string> data_fields {"name_FirstName", "name_LastName", "address_City"};
-    Json::Value data_field_config = extractJsonValue(SMPL_DF_CNFG + "config_valid.json");
-    Json::Value data_update_input = extractJsonValue(SMPL_DF_CNFG + "update_valid.json");
-    Json::Value data_request_input = extractJsonValue(SMPL_DF_CNFG + "request_valid.json");
+    Json::Value data_update_input = extractJsonValue(SAMLE_DATA_FIELDS + "update_valid.json");
+    Json::Value data_request_input = extractJsonValue(SAMLE_DATA_FIELDS + "request_valid.json");
 
     // Tests the json objects for correctness
-    EXPECT_NO_THROW(Assertions::assertValidDataFields(data_fields));
-    EXPECT_NO_THROW(Assertions::assertDataFieldConfig(data_field_config));
-    EXPECT_NO_THROW(Assertions::assertValidDataUpdate(data_update_input));
-    EXPECT_NO_THROW(Assertions::assertValidDataRequest(data_request_input));
+    EXPECT_NO_THROW(Assertions::assertAreConfigDataFields(data_fields));
+    // EXPECT_NO_THROW(Assertions::assertValidDataUpdate(data_update_input)); // TODO, Needs to be rewritten
+    // EXPECT_NO_THROW(Assertions::assertValidDataRequest(data_request_input)); // TODO, Needs to be rewritten
 
     // Takes down the test
     Config::uninitialize();
 }
 
 /**
- * TestMethodThrows_assertValidDataFields - Test that the method assertValidDataFields() correctly 
+ * TestMethodThrows_assertAreConfigDataFields - Test that the method assertAreConfigDataFields() correctly 
  *              throws when invalid data_fields (compared to Config) are passed within the list.
  */
-TEST(TestDataField_Assertions, TestMethodThrows_assertValidDataFields){
+TEST(TestDataField_Assertions, TestMethodThrows_assertAreConfigDataFields){
     // Sets up the test
-    copyFile(SMPL_DF_CNFG + "config_valid.json", DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(SAMLE_DATA_FIELDS + "config_valid.json", DATA_FIELD_CONFIG_FILE_NAME);
     Config::initialize();
 
     // Creates sample data field lists
@@ -82,12 +65,12 @@ TEST(TestDataField_Assertions, TestMethodThrows_assertValidDataFields){
     vector<string> dt_invalid_some{"billing_FirstName", "name_FirstName", "invalid_data_field"};
     vector<string> dt_invalid_all{"invalid_data_field", "probably_not_valid", "maybe_valid"};
 
-    // Tests that assertValidDataFields() throws as expected
-    EXPECT_THROW(Assertions::assertValidDataFields(dt_empty), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataFields(dt_empty_str), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataFields(dt_one), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataFields(dt_invalid_some), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataFields(dt_invalid_all), runtime_error);
+    // Tests that assertAreConfigDataFields() throws as expected
+    EXPECT_THROW(Assertions::assertAreConfigDataFields(dt_empty), runtime_error);
+    EXPECT_THROW(Assertions::assertAreConfigDataFields(dt_empty_str), runtime_error);
+    EXPECT_THROW(Assertions::assertAreConfigDataFields(dt_one), runtime_error);
+    EXPECT_THROW(Assertions::assertAreConfigDataFields(dt_invalid_some), runtime_error);
+    EXPECT_THROW(Assertions::assertAreConfigDataFields(dt_invalid_all), runtime_error);
 
     // Takes down the test
     Config::uninitialize();
@@ -146,27 +129,29 @@ TEST(TestDataField_Assertions, TestMethodThrows_assertDataFieldConfig){
  */
 TEST(TestDataField_Assertions, TestMethodThrows_assertValidDataUpdate){
     // Sets up the test
-    copyFile(SMPL_DF_CNFG + "config_valid.json", DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(SAMLE_DATA_FIELDS + "config_valid.json", DATA_FIELD_CONFIG_FILE_NAME);
     Config::initialize();
 
-    EXPECT_NO_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_valid_reference.json")));
+     EXPECT_TRUE(false); // TODO, this test needs to be rewritten
 
-    // Test invalid general update setups
-    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_duplicate_key.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_file_empty.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_unknown_key.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_user_id_missing.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_missing.json")), runtime_error);
+    // EXPECT_NO_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_valid_reference.json")));
 
-    // Test invalid user_id setups
-    EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_user_id_not_string_type.json")), runtime_error);
+    // // Test invalid general update setups
+    // // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_duplicate_key.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_file_empty.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_unknown_key.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_user_id_missing.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_missing.json")), runtime_error);
 
-    // Test invalid encrypted_data_fields setups
-    EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_empty.json")), runtime_error);
-    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_entry_duplicate.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_entry_invalid.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_entry_not_string_type.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_not_dictionary_type.json")), runtime_error);
+    // // Test invalid user_id setups
+    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_user_id_not_string_type.json")), runtime_error);
+
+    // // Test invalid encrypted_data_fields setups
+    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_empty.json")), runtime_error);
+    // // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_entry_duplicate.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_entry_invalid.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_entry_not_string_type.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataUpdate(extractJsonValue(INVALID_UPDATE + "update_invalid_encrypted_data_fields_not_dictionary_type.json")), runtime_error);
 
     // Takes down the test
     Config::uninitialize();
@@ -178,40 +163,43 @@ TEST(TestDataField_Assertions, TestMethodThrows_assertValidDataUpdate){
  */
 TEST(TestDataField_Assertions, TestMethodThrows_assertValidDataRequest){
     // Sets up the test
-    copyFile(SMPL_DF_CNFG + "config_valid.json", DATA_FIELD_CONFIG_FILE_NAME);
+    copyFile(SAMLE_DATA_FIELDS + "config_valid.json", DATA_FIELD_CONFIG_FILE_NAME);
     Config::initialize();
 
-    EXPECT_NO_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_valid_reference.json")));
+    EXPECT_TRUE(false); // TODO, this test needs to be rewritten
 
-    // Test invalid general request setups
-    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_duplicate_key.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_file_empty.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_unknown_key.json")), runtime_error);
+    // EXPECT_NO_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_valid_reference.json")));
 
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_missing.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_missing.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_request_id_missing.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_user_id_missing.json")), runtime_error);
+    // // Test invalid general request setups
+    // // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_duplicate_key.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_file_empty.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_unknown_key.json")), runtime_error);
 
-    // Test invalid private_keys setups
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_empty.json")), runtime_error);
-    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_entry_duplicate.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_entry_invalid.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_entry_not_string_type.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_not_dictionary_type.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_missing.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_missing.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_request_id_missing.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_user_id_missing.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_public_keys_entry_invalid.json")), runtime_error);
 
-    // Test invalud public_keys setups
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_empty.json")), runtime_error);
-    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_entry_duplicate.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_entry_invalid.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_entry_not_string_type.json")), runtime_error);
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_not_dictionary_type.json")), runtime_error);
+    // // Test invalid private_keys setups
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_empty.json")), runtime_error);
+    // // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_entry_duplicate.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_entry_invalid.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_entry_not_string_type.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_private_keys_not_dictionary_type.json")), runtime_error);
 
-    // Test invalid request_id setups
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_request_id_not_string_type.json")), runtime_error);
+    // // Test invalud public_keys setups
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_empty.json")), runtime_error);
+    // // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_entry_duplicate.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_entry_invalid.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_entry_not_string_type.json")), runtime_error);
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_public_keys_not_dictionary_type.json")), runtime_error);
 
-    // Test invalid user_id setups
-    EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_user_id_not_string_type.json")), runtime_error);
+    // // Test invalid request_id setups
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_request_id_not_string_type.json")), runtime_error);
+
+    // // Test invalid user_id setups
+    // EXPECT_THROW(Assertions::assertValidDataRequest(extractJsonValue(INVALID_REQUEST + "request_invalid_user_id_not_string_type.json")), runtime_error);
 
     // Take down the test
     Config::uninitialize();

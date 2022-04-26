@@ -6,10 +6,9 @@
  * @date: February 19, 2022
  */
 
-#include <string>
+#pragma once
 
-#if !defined(KEEP_CONSTANTS)
-#define KEEP_CONSTANTS 1
+#include <string>
 
 // Configurations constants
 const std::string DATA_FIELD_CONFIG_FILE_NAME = "data-fields-config.json";
@@ -18,6 +17,7 @@ const std::string CONSTRAINTS = "constraints";
 
 // Data transmission constants
 const std::string ENCRYPTED_DATA_FIELDS = "encrypted_data_fields";
+const std::string EXPECTED_DATA_FIELDS = "expected_data_fields";
 
 // Data field constants
 const std::string USER_ID = "user_id";
@@ -31,5 +31,8 @@ const std::string OPTIONS = "options";
 const std::string STRING = "string";
 const std::string INTEGER = "int";
 
-#endif
+// Formatting constants
+const int DATA_FIELDS_CONFIG_NUM_JSON_FIELDS = 2; // "option_lists", "constraints"
+const int DATA_FIELDS_UPDATE_NUM_JSON_FIELDS = 2; // "user_id", "encrypted_data_fields"
+const int DATA_FIELDS_REQUEST_NUM_JSON_FIELDS = 5; // "request_id", "user_id", "expected_data_fields", "public_keys", "private_keys"
 
