@@ -30,3 +30,9 @@ const std::string MAX_CHARS = "max_chars";
 const std::string OPTIONS = "options";
 const std::string STRING = "string";
 const std::string INTEGER = "int";
+
+// Formatting constants
+const int DATA_FIELDS_CONFIG_NUM_JSON_FIELDS = 2; // "option_lists", "constraints"
+const int DATA_FIELDS_UPDATE_NUM_JSON_FIELDS = 2; // "user_id", "encrypted_data_fields"
+const int DATA_FIELDS_REQUEST_NUM_JSON_FIELDS = 5; // "request_id", "user_id", "expected_data_fields", "public_keys", "private_keys"
+

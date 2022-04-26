@@ -53,14 +53,14 @@ void workLoop(const atomic<bool> &loop_thread){
  */
 void userDataUpdateTask(const string& raw_data_update_str){
     // Obtains the raw data
-    const Json::Value raw_data_update_json = parseJsonString(raw_data_update_str);
+    const Json::Value& raw_data_update_json = parseJsonString(raw_data_update_str);
     Assertions::assertValidRawUpdateJson(raw_data_update_json);
     const string& user_id = raw_data_update_json[USER_ID].asString();
     const string& keep_encrypted_data_fields = raw_data_update_json[ENCRYPTED_DATA_FIELDS].asString();
 
     // Decrypts and validates the encrypted data fields
-    const string keep_decrypted_data_fields = KeyManager::decryptMessage(keep_encrypted_data_fields);
-    const Json::Value encrypted_data_fields_json = parseJsonString(keep_decrypted_data_fields);
+    const string& keep_decrypted_data_fields = KeyManager::decryptMessage(keep_encrypted_data_fields);
+    const Json::Value& encrypted_data_fields_json = parseJsonString(keep_decrypted_data_fields);
     Assertions::assertValidEncryptedUpdateDataFields(encrypted_data_fields_json);
 
     // Updates the Keep's database
@@ -79,7 +79,7 @@ void userDataRequestTask(const string& raw_data_request_str){
     // Parse and Validate the Input
     ////////////////////////////////////////////////////
     // Parses and validates the raw data request form
-    const Json::Value raw_data_request_json = parseJsonString(raw_data_request_str);
+    const Json::Value& raw_data_request_json = parseJsonString(raw_data_request_str);
     Assertions::assertValidRawRequestJson(raw_data_request_json);
 
     // Parses the unencrypted entries
@@ -101,7 +101,7 @@ void userDataRequestTask(const string& raw_data_request_str){
     // Decrypts and records the private keys
     const string& keep_encrypted_private_keys = raw_data_request_json[PUBLIC_KEYS].asString();
     const string& keep_decrypted_private_keys = KeyManager::decryptMessage(keep_encrypted_private_keys);
-    const Json::Value private_keys = parseJsonString(keep_decrypted_private_keys);
+    const Json::Value& private_keys = parseJsonString(keep_decrypted_private_keys);
 
     // Assert that the given information is valid
     Assertions::assertAreConfigDataFields(expected_data_fields);
@@ -112,7 +112,7 @@ void userDataRequestTask(const string& raw_data_request_str){
     // TODO, at this moment, all public/private keys are assumed to be for exactly the expected data fields
 
     // Validate the public and private keys
-    for (string field: expected_data_fields){
+    for (const string& field: expected_data_fields){
         if (!KeyManager::validatePublicKey(public_keys[field].asString())){
             throw runtime_error("A public key could not be validated.");
         }else if (!KeyManager::validatePrivateKey(private_keys[field].asString())){
@@ -154,17 +154,17 @@ void userDataRequestTask(const string& raw_data_request_str){
     ////////////////////////////////////////////////////
     // Generating temporary keys (for the client company)
     pair<string, string> key_pair = KeyManager::generateKeyPair();
-    string temp_public_key = key_pair.first;
-    string temp_private_key = key_pair.second;
+    const string& temp_public_key = key_pair.first;
+    const string& temp_private_key = key_pair.second;
 
     // Prepares the user data to send to the client company
     Json::Value data_to_forward;
-    for (string field: expected_data_fields){
+    for (const string& field: expected_data_fields){
         data_to_forward[field] = decrypted_data[field].asString();
     }
 
-    string encrypted_data_to_forward = KeyManager::encryptMessage(data_to_forward.asString(),
-                                                                  temp_public_key);
+    const string& encrypted_data_to_forward = KeyManager::encryptMessage(data_to_forward.asString(),
+                                                                         temp_public_key);
 
     // Forwards the company encrypted data
     // OutputMessageClient.forwardCompanyEncryptedData(request_id, encrypted_data_to_forward);

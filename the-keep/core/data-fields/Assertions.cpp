@@ -37,7 +37,7 @@ void Assertions::assertAreConfigDataFields(const vector<string> &data_fields){
  * Assertions::assertDataFieldConfig()
  */
 void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
-    if (data_field_config.size() != 2)
+    if (data_field_config.size() != DATA_FIELDS_CONFIG_NUM_JSON_FIELDS)
         throw runtime_error("Data field configuration fields are missing or are in excess.");
 
     // Asserts the options list
@@ -111,7 +111,7 @@ void Assertions::assertDataFieldConfig(const Json::Value &data_field_config){
  */
 void Assertions::assertValidRawUpdateJson(Json::Value raw_update_json){
     // Checks that the basic members exist
-    if (raw_update_json.size() != 2)
+    if (raw_update_json.size() != DATA_FIELDS_UPDATE_NUM_JSON_FIELDS)
         throw runtime_error("Data update json fields are missing or are in excess.");
 
     if (!raw_update_json.isMember(USER_ID) || !raw_update_json[USER_ID].isString())
@@ -142,7 +142,7 @@ void Assertions::assertValidEncryptedUpdateDataFields(Json::Value encrypted_upda
  */
 void Assertions::assertValidRawRequestJson(Json::Value raw_request_json){
     // Checks that the basic members exist
-    if (raw_request_json.size() != 5)
+    if (raw_request_json.size() != DATA_FIELDS_REQUEST_NUM_JSON_FIELDS)
         throw runtime_error("Data request json fields are missing or are in excess.");
 
     if (!raw_request_json.isMember(REQUEST_ID) || !raw_request_json[REQUEST_ID].isString())
