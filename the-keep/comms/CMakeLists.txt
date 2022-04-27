@@ -1,13 +1,10 @@
-
-### Find external libaries ###
-find_library(MODERN_KAFKA_PATH modern-cpp-kafka)
-message("Modern-CPP-Kafka library found at: ${MODERN_KAFKA_PATH}")
-
-find_library(CASSANDRA_DRIVER_PATH cassandra-cpp-driver)
-message("Cassandra-CPP-Driver found at: ${CASSANDRA_DRIVER_PATH}")
+# ----------------------------------------------------------------------------
+#  CMake file for the Communication Libraries: Kafka & Cassandra
+# ----------------------------------------------------------------------------
 
 # Create a DBnMessaging library
 add_library(DBnMessaging STATIC
+            CommsConfig.hpp
             KafkaDriver.hpp
             KafkaDriver.cpp
             CassandraDriver.hpp

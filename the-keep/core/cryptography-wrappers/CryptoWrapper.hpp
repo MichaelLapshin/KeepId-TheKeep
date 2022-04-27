@@ -63,6 +63,7 @@ class CryptoWrapper {
          * @return True if the private-key is valid, otherwise false.
          */
         virtual bool validatePrivateKey(string private_key) const = 0;
+        virtual ~CryptoWrapper() {}
     protected:
         const int ENCRYPTION_KEY_BIT_SIZE = 2048;
     private:

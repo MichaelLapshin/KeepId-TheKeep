@@ -1,7 +1,7 @@
-#include <cassandra.h>
-/* Use "#include <dse.h>" when connecting to DataStax Enterpise */
 #include <stdio.h>
+#include <cassandra.h>
 
+#include "CommsConfig.hpp"
 #include "CassandraDriver.hpp"
 using namespace thekeep;
 
@@ -13,7 +13,7 @@ int CassandraDriver::connect(const string& ip, const string& user, const string&
   //connect_future = NULL;        // CassFuture*
   cluster = cass_cluster_new();  // CassCluster*
   session = cass_session_new(); // CassSession* 
-  char* hosts = "127.0.0.1";   // if (argc > 1) hosts = argv[1]; 
+  const char* hosts = KAFKA_URL.c_str();   // if (argc > 1) hosts = argv[1];  // hardcoded
 
   /* Add contact points */
   cass_cluster_set_contact_points(cluster, hosts);
@@ -28,7 +28,9 @@ int CassandraDriver::connect(const string& ip, const string& user, const string&
     //....
   }
 
+  return 0;
 }
+
 //
 void CassandraDriver::disconnect() {
   cass_future_free(connect_future);
@@ -85,10 +87,10 @@ if (cass_future_error_code(connect_future) == CASS_OK) {
     fprintf(stderr, "Unable to connect: '%.*s'\n", (int)message_length, message);
   }
 
+  return 0;
 }
 
 int CassandraDriver::put(const string& userid, const string& fieldid, const string& value) {
   // TODO:
-
+  return 0;
 }
-
