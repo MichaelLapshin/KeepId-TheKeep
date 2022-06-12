@@ -14,6 +14,9 @@
 #include "core/data-fields/Config.hpp"
 
 #include "comms/KafkaDriver.hpp"
+#include "comms/TheKeepDB.hpp"
+#include "comms/CassandraDriver.hpp"
+#include "comms/CommsConfig.hpp"
 
 using namespace std;
 using namespace thekeep;
@@ -44,6 +47,14 @@ int main(int argc, char *argv[]){
                messages.pop();
         }
     }
+
+
+    TheKeepDB *db = new CassandraDriver();
+    db->connect(CASSANRDA_URL,"cassandra","cassandra");
+    TheKeepRecord data = db->get(123,23);
+    cout<< "test: ";--exit
+    cout << data.userid << " - " << data.fieldid << ": " << data.chip << std::endl;
+    delete db;
 */
 
     // Starts the command line interface

@@ -20,6 +20,7 @@ namespace thekeep {
     // DB Configurations constants
     const std::string CASSANRDA_URL = "dockers_cassandra_1"; // maybe "127.0.0.1"
     const uint CASSANRDA_PORT = 7007;
+    const std::string CASSANRDA_URLPORT = "dockers_cassandra_1:7007"; // maybe "127.0.0.1:7007"
     const std::string CASSANRDA_DB = "KeepId";
     const std::string CASSANRDA_SCHEMA = "KeepIdCow";
 

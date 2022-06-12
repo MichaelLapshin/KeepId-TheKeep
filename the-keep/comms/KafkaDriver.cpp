@@ -10,6 +10,7 @@
 #include <kafka/KafkaConsumer.h>
 #include <kafka/KafkaProducer.h>
 
+#include "CommErrors.hpp"
 #include "CommsConfig.hpp"
 #include "KafkaDriver.hpp"
 
@@ -120,10 +121,11 @@ queue<string> KafkaDriver::receive(const string& topic, int timeoutms)
 
             results.push(record.value().toString());
         } else {
-            // TODO: add an exception?
+            // TODO: clean up and add an exception?
             cerr << record.toString() << endl;
             lock_guard<mutex> lk(kafka_mutex);
             lasterror = record.error(); // passive reporting
+            throw MessagingException(record.toString());
         }
     }
     
