@@ -48,11 +48,10 @@ int main(int argc, char *argv[]){
         }
     }
 
-
     TheKeepDB *db = new CassandraDriver();
     db->connect(CASSANRDA_URL,"cassandra","cassandra");
     TheKeepRecord data = db->get(123,23);
-    cout<< "test: ";--exit
+    cout << "test: ";
     cout << data.userid << " - " << data.fieldid << ": " << data.chip << std::endl;
     delete db;
 */

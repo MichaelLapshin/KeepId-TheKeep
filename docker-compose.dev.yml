@@ -4,6 +4,7 @@ version: "3.8"
 
 services:
   zookeeper:
+    container_name: thekeep_zookeeper   # fixed container name; doern't scale as default
     image: docker.io/bitnami/zookeeper:latest
     networks:
       - keepid-net
@@ -16,7 +17,9 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
 
   kafka:
+    container_name: thekeep_kafka_1   # fixed container name; doern't scale as default
     image: docker.io/bitnami/kafka:latest
+    tmpfs: "/datalog"  # (not working?) to remove 'node already exists' error (https://github.com/wurstmeister/kafka-docker/issues/389)
     networks:
       - keepid-net
     ports:
@@ -24,18 +27,19 @@ services:
     volumes:
       - "kafka_data:/bitnami"
     environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181    # defines connection to a zookeeper; will replace with IP internally
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
-     # - KAFKA_ADVERTISED_HOST_NAME=kafka
+     # - KAFKA_ADVERTISED_HOST_NAME=thekeep_kafka
      # - KAFKA_ADVERTISED_PORT=9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://dockers_kafka_1:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://thekeep_kafka_1:9092,EXTERNAL://localhost:9093
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
     depends_on:
       - zookeeper
 
   cassandra:
+    container_name: thekeep_cassandra   # fixed container name; doern't scale as default
     image: docker.io/bitnami/cassandra:4.0
     networks:
       - keepid-net
