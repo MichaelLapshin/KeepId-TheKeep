@@ -32,6 +32,7 @@ void KeyManager::initialize(){
         readKeysFromStorage();
     }else{
         // Generates and stores the keys
+        KeyManager::initialized_ = true; // note: this is redundant but required by generateKeyPair() TODO: check logic
         pair<string, string> key_pair = generateKeyPair();
         KeyManager::public_key_ = key_pair.first;
         KeyManager::private_key_ = key_pair.second;
@@ -99,6 +100,7 @@ bool KeyManager::validatePrivateKey(string private_key){
  * KeyManager::generateKeyPair()
  */
 pair<string, string> KeyManager::generateKeyPair(){
+    // TODO: check logic since this function is called during initialization before it's completed
     if (!KeyManager::initialized_){
         throw runtime_error("The KeyManager was not initilaized.");
     }

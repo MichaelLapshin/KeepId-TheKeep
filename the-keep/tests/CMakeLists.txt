@@ -9,6 +9,7 @@ add_library(KeepUnitTests OBJECT
     Test_HelperFunctions.cpp
     Test_KeyManager.cpp
     Test_TaskManager.cpp
+    Test_CassandraCow.cpp
 )
 
 message("Added UniTest library.")

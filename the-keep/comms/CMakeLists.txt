@@ -4,6 +4,7 @@
 
 # Create a DBnMessaging library
 add_library(DBnMessaging STATIC
+            CommErrors.hpp
             CommsConfig.hpp
             KafkaDriver.hpp
             KafkaDriver.cpp
