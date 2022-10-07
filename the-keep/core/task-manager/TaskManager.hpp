@@ -48,6 +48,6 @@ class TaskManager {
     private:       
         // Variables
         bool is_running = false;
-        atomic<bool> loop_thread;
+        atomic<bool> loop_thread; // flag for running the Keep main loop
         thread *thread_obj;
 };

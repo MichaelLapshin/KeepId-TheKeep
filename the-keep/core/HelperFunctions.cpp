@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <unique_ptr>
 
 #include <jsoncpp/json/json.h>
 
@@ -31,7 +32,7 @@ Json::Value parseJsonString(string json_str){
     // Create JsonCpp objects necessary for parsing the Json string
     Json::Value json_obj;
     Json::CharReaderBuilder builder;
-    Json::CharReader *reader = builder.newCharReader();
+    unique_ptr<Json::CharReader> reader = make_unique(builder.newCharReader()); // TODO: double check if this unique_ptr pointer syntax is correct
     Json::String errors;
 
     // Parse the string
@@ -39,7 +40,6 @@ Json::Value parseJsonString(string json_str){
                                  json_str.c_str() + json_str.size(), 
                                  &json_obj, 
                                  &errors);
-    delete reader;
 
     // Handle the result
     if (!success){

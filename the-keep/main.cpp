@@ -21,15 +21,16 @@
 using namespace std;
 using namespace thekeep;
 
-void initialize();
-void uninitialize();
-
 int main(int argc, char *argv[]){
-    // Initializes the critical components of the Keep
-    initialize();
+    // Starts the Keep
+    cout << "Initializing the Keep... ";
+    KeyManager::initializeKeepKeys();
+    Config::initialize();
+    cout << "Done." << endl;
+
     TaskManager worker{};
 
-    // Development test 
+    // Development test --- TODO: remove this
 /*
     unique_ptr<TheKeepMessaging> kd = make_unique<KafkaDriver>();
     kd->initialize("");
@@ -84,29 +85,10 @@ int main(int argc, char *argv[]){
         }
     }
 
-    uninitialize();
-    cout << "Exiting the program..." << endl;
-    return 0;
-}
-
-/**
- * initialize()
- * @brief Initializes all components used in running the Keep.
- */
-void initialize(){
-    cout << "Initializing the Keep... ";
-    Config::initialize();
-    KeyManager::initialize();
-    cout << "Done." << endl;
-}
-
-/**
- * uninitialize()
- * @brief Uninitializes all components used in running the Keep.
- */
-void uninitialize(){
+    // Stops the Keep
     cout << "Uninitializing the Keep... ";
-    KeyManager::uninitialize();
     Config::uninitialize();
     cout << "Done." << endl;
+    cout << "Exiting the program..." << endl;
+    return 0;
 }

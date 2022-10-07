@@ -34,14 +34,24 @@ void workLoop(const atomic<bool> &loop_thread){
         /////////////////////////////////////////////
         ///  Poll and execute user-data updating  ///
         /////////////////////////////////////////////
-        const string data_update_str_json; // = MessageClient.PollFetchDataUpdate() // Contains user_id, encrypted_data_fields
-        userDataUpdateTask(data_update_str_json);
+        try {
+            const string data_update_str_json; // = MessageClient.PollFetchDataUpdate() // Contains user_id, encrypted_data_fields
+            userDataUpdateTask(data_update_str_json);
+        } catch(const std::runtime_error& exception) {
+            // TODO: Log the exception
+            // TODO: Redact and propagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+        }
 
         /////////////////////////////////////////////
         ///     Poll and execute data-request     ///
         /////////////////////////////////////////////
-        const string data_request_str_json; // = MessageClient.fetchUserDataRequest() // Contains user_id, request_id, private_keys, public_keys
-        userDataRequestTask(data_request_str_json);
+        try {
+            const string data_request_str_json; // = MessageClient.fetchUserDataRequest() // Contains user_id, request_id, private_keys, public_keys
+            userDataRequestTask(data_request_str_json);
+        } catch(const std::runtime_error& exception) {
+            // TODO: Log the exception.
+            // TODO: Redact and ropagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+        }
     }
 }
 
@@ -59,6 +69,7 @@ void userDataUpdateTask(const string& raw_data_update_str){
     const string& keep_encrypted_data_fields = raw_data_update_json[ENCRYPTED_DATA_FIELDS].asString();
 
     // Decrypts and validates the encrypted data fields
+    
     const string& keep_decrypted_data_fields = KeyManager::decryptMessage(keep_encrypted_data_fields);
     const Json::Value& encrypted_data_fields_json = parseJsonString(keep_decrypted_data_fields);
     Assertions::assertValidEncryptedUpdateDataFields(encrypted_data_fields_json);
@@ -88,10 +99,6 @@ void userDataRequestTask(const string& raw_data_request_str){
 
     const int num_expected_data_fields = raw_data_request_json[EXPECTED_DATA_FIELDS].size();
     vector<string> expected_data_fields = raw_data_request_json[EXPECTED_DATA_FIELDS].getMemberNames();
-    // vector<string> expected_data_fields(num_expected_data_fields);
-    // for (int index = 0; index < num_expected_data_fields; index++){
-    //     expected_data_fields[index] = raw_data_request_json[EXPECTED_DATA_FIELDS][index].asString();
-    // }
 
     // Decrypts and records the public keys
     const string& keep_encrypted_public_keys = raw_data_request_json[PUBLIC_KEYS].asString();
@@ -109,7 +116,6 @@ void userDataRequestTask(const string& raw_data_request_str){
     Assertions::assertValidKeysJsonFormat(private_keys);
     Assertions::assertMatchingStringElements(expected_data_fields, public_keys.getMemberNames()); 
     Assertions::assertMatchingStringElements(expected_data_fields, private_keys.getMemberNames());
-    // TODO, at this moment, all public/private keys are assumed to be for exactly the expected data fields
 
     // Validate the public and private keys
     for (const string& field: expected_data_fields){
@@ -123,13 +129,13 @@ void userDataRequestTask(const string& raw_data_request_str){
     ////////////////////////////////////////////////////
     // Re-encrypte the Keep's Data
     ////////////////////////////////////////////////////
-    const Json::Value encrytped_data; // = HolyCow.fetchKeepUserData(user_id, data_fields);
+    const Json::Value encrypted_data; // = HolyCow.fetchKeepUserData(user_id, data_fields);
     Json::Value decrypted_data;
     Json::Value reencrypted_data;
 
     for (const string &field : expected_data_fields){
         // Decrypts the data
-        decrypted_data[field] = KeyManager::decryptMessage(encrytped_data[field].asString(),
+        decrypted_data[field] = KeyManager::decryptMessage(encrypted_data[field].asString(),
                                                            private_keys[field].asString());
         // Re-encrypts the data
         reencrypted_data[field] = KeyManager::encryptMessage(decrypted_data[field].asString(),
@@ -153,7 +159,7 @@ void userDataRequestTask(const string& raw_data_request_str){
     // Prepare and Forward User Data to Client Company
     ////////////////////////////////////////////////////
     // Generating temporary keys (for the client company)
-    pair<string, string> key_pair = KeyManager::generateKeyPair();
+    const pair<string, string> key_pair = KeyManager::generateKeyPair();
     const string& temp_public_key = key_pair.first;
     const string& temp_private_key = key_pair.second;
 

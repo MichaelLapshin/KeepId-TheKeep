@@ -7,6 +7,7 @@
 
 #include <string>
 #include <fstream>
+#include <unqiue_ptr>
 
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/reader.h>
@@ -23,7 +24,7 @@ using namespace std;
  */
 void Config::initialize(){
     if (Config::initialized_){
-        throw runtime_error("Data field configurations were already initialized.");
+        throw runtime_error("Data field configuration was already initialized.");
     }
 
     // Reads all lines from the configurations file
@@ -32,14 +33,13 @@ void Config::initialize(){
     // Creates config Json object
     Json::CharReaderBuilder json_builder;
     string err_msg;
-    Config::data_field_config_ = new Json::Value();
+    Config::data_field_config_ = make_unique(Json::Value());
     bool parse_success = Json::parseFromStream(json_builder, file_input_stream, Config::data_field_config_, &err_msg);
     
     // Handles parsing errors
     if (!parse_success){
         throw runtime_error(
-            "Error. The data field configuration file was unsuccessfully "
-            "parsed.\n" + err_msg
+            "Error. The data field configuration file was unsuccessfully parsed.\n" + err_msg
         );
     }
 
@@ -53,10 +53,9 @@ void Config::initialize(){
  */
 void Config::uninitialize(){
     if (!Config::initialized_){
-        throw runtime_error("Data field configurations were not initialized.");
+        throw runtime_error("Data field configuration was not initialized.");
     }
 
-    delete Config::data_field_config_;
     Config::initialized_ = false; 
 }
 
@@ -65,7 +64,7 @@ void Config::uninitialize(){
  */
 vector<string> Config::validateDecryptedDataFields(const Json::Value &data_fields){
     if (!Config::initialized_){
-        throw runtime_error("Data field configurations were not initialized.");
+        throw runtime_error("Data field configuration was not initialized.");
     }
 
     Assertions::assertAreConfigDataFields(data_fields.getMemberNames());
@@ -129,7 +128,7 @@ vector<string> Config::validateDecryptedDataFields(const Json::Value &data_field
  */
 Json::Value Config::getOptionLists(){
     if (!Config::initialized_){
-        throw runtime_error("Data field configurations were not initialized.");
+        throw runtime_error("Data field configuration was not initialized.");
     }
     return (*Config::data_field_config_)[OPTION_LISTS];
 }
@@ -139,7 +138,7 @@ Json::Value Config::getOptionLists(){
  */
 Json::Value Config::getConstraints(){
     if (!Config::initialized_){
-        throw runtime_error("Data field configurations were not initialized.");
+        throw runtime_error("Data field configuration was not initialized.");
     }
     return (*Config::data_field_config_)[CONSTRAINTS];
 }
