@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <unique_ptr>
 
 #include "../cryptography-wrappers/CryptoWrapper.hpp"
 
@@ -17,18 +18,10 @@ class KeyManager {
     public:
 
         /**
-         * KeyManager::initialize()
-         * @brief Creates cryptography object. Reads the public and private keys
-         *          from the designated file or generates and stores the keys if
-         *          they do not already exist.
+         * KeyManager::initializeKeepKeys()
+         * @brief Generates a public/private key pair and saves them as the Keep keys.
          */
-        static void initialize();
-
-        /**
-         * KeyManager::uninitialize()
-         * @brief Deletes all static objects. Uninitializes the Key Manager.
-         */
-        static void uninitialize();
+        static void initializeKeepKeys();
 
         /**
          * KeyManager::generateKeyPair()
@@ -81,39 +74,11 @@ class KeyManager {
          * @return True if the key is valid, otherwise false.
          */
         static bool validatePrivateKey(string private_key);
-    protected:
     private:
-        /**
-         * KeyManager::areKeysInStorage()
-         * @brief Attempts to identify the public and private key within
-         *          the predefined key storage location.
-         */
-        static bool areKeysInStorage();
-
-        /**
-         * KeyManager::writeKeysToStorage()
-         * @brief Uses the keys stored as private variables and writes
-         *          them into the predefined storage location.
-         */
-        static void writeKeysToStorage();
-
-        /**
-         * KeyManager::readKeysFromStorage()
-         * @brief Reads the keys from the predefined storage location 
-         *          and write the keys into the private variables.
-         * @return A public and private key in the form of a pair (private, public).
-         */
-        static void readKeysFromStorage();
-
-        // File constants
-        inline static const string PUBLIC_KEY_FILE = "KeepPublicKey.dat";
-        inline static const string PRIVATE_KEY_FILE = "KeepPrivateKey.dat";
-
         // RSA key pair variables in DER format
         inline static string public_key_ = "";
         inline static string private_key_ = "";
 
         // Manager variables
-        inline static CryptoWrapper* crypto_wrapper_ = nullptr;
-        inline static bool initialized_ = false;
+        inline static std::unique_ptr<CryptoWrapper> crypto_wrapper_ = make_unique<CryptoWrapper_Cryptopp>();
 };

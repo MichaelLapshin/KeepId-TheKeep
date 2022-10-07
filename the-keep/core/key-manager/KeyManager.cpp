@@ -16,43 +16,19 @@
 using namespace std;
 
 /**
- * KeyManager::initialize()
+ * KeyManager::initializeKeepKeys()
  */
-void KeyManager::initialize(){
-    if (KeyManager::initialized_){
-        throw runtime_error("Attempted to initialize the Key Manager a second time.");
-    }
-
-    // Creates new cryptography object
-    KeyManager::crypto_wrapper_ = new CryptoWrapper_Cryptopp();
-
-    // Fills the private and public key variables
-    if (areKeysInStorage()){
-        // Reads keys from the files
-        readKeysFromStorage();
-    }else{
-        // Generates and stores the keys
-        KeyManager::initialized_ = true; // note: this is redundant but required by generateKeyPair() TODO: check logic
-        pair<string, string> key_pair = generateKeyPair();
-        KeyManager::public_key_ = key_pair.first;
-        KeyManager::private_key_ = key_pair.second;
-
-        writeKeysToStorage();
-    }
-
-    KeyManager::initialized_ = true;
+void KeyManager::initializeKeepKeys(){
+    pair<string, string> key_pair = generateKeyPair();
+    KeyManager::public_key_ = key_pair.first;
+    KeyManager::private_key_ = key_pair.second;
 }
 
 /**
- * KeyManager::uninitialize()
+ * KeyManager::generateKeyPair()
  */
-void KeyManager::uninitialize(){
-    if (!KeyManager::initialized_){
-        throw runtime_error("Attempted to uninitialize the Key Manager when it was never initialized.");
-    }
-
-    delete KeyManager::crypto_wrapper_;
-    KeyManager::initialized_ = false;
+pair<string, string> KeyManager::generateKeyPair(){
+    return KeyManager::crypto_wrapper_->generateRSAKeyPair();
 }
 
 /*
@@ -94,60 +70,4 @@ bool KeyManager::validatePublicKey(string public_key){
  */
 bool KeyManager::validatePrivateKey(string private_key){
     return KeyManager::crypto_wrapper_->validatePrivateKey(private_key);
-}
-
-/**
- * KeyManager::generateKeyPair()
- */
-pair<string, string> KeyManager::generateKeyPair(){
-    // TODO: check logic since this function is called during initialization before it's completed
-    if (!KeyManager::initialized_){
-        throw runtime_error("The KeyManager was not initilaized.");
-    }
-
-    return KeyManager::crypto_wrapper_->generateRSAKeyPair();
-}
-
-/**
- * KeyManager::areKeysInStrage()
- */
-bool KeyManager::areKeysInStorage(){
-    return filesystem::exists(KeyManager::PUBLIC_KEY_FILE)
-        && filesystem::exists(KeyManager::PRIVATE_KEY_FILE);
-}
-
-/**
- * KeyManager::writeKeysToStorage()
- */
-void KeyManager::writeKeysToStorage(){
-    // Saves public key
-    ofstream public_key_file {KeyManager::PUBLIC_KEY_FILE};
-    public_key_file << KeyManager::public_key_;
-    public_key_file.close();
-
-    // Saves private key
-    ofstream private_key_file {KeyManager::PRIVATE_KEY_FILE};
-    private_key_file << KeyManager::private_key_;
-    private_key_file.close();
-}
-
-/**
- * KeyManager::readKeysFromStorage()
- */
-void KeyManager::readKeysFromStorage(){
-    // Read public key
-    ifstream public_key_file {KeyManager::PUBLIC_KEY_FILE};
-    KeyManager::public_key_.assign(
-            istreambuf_iterator<char>(public_key_file),
-            istreambuf_iterator<char>());
-    public_key_file.close();
-
-    
-
-    // Read private key
-    ifstream private_key_file {KeyManager::PRIVATE_KEY_FILE};
-    KeyManager::private_key_.assign(
-            istreambuf_iterator<char>(private_key_file),
-            istreambuf_iterator<char>());
-    private_key_file.close();
 }
