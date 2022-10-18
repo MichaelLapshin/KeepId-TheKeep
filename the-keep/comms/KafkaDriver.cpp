@@ -85,8 +85,9 @@ int KafkaDriver::send(const string& topic, const string& message)
                             } else {
                                 scoped_lock(this->kafka_mutex);
                                 this->lasterror = error;
+
                                 // DEBUG: to add logging
-                                std::cerr << "% Message delivery failed: " << error.message() << std::endl;
+//                                 std::cerr << "% Message delivery failed: " << error.message() << std::endl;
                             }
                          });
     return 0;
@@ -117,12 +118,13 @@ queue<string> KafkaDriver::receive(const string& topic, int timeoutms)
             // std::cout << "    Key   [" << record.key().toString() << "]" << std::endl;
             // std::cout << "    Value [" << record.value().toString() << "]" << std::endl;
 
-            std::cout << "% Message received: <" << record.topic() << "> " << record.value().toString() << std::endl;
+// DEBUG: to add logging
+// debug:s   std::cout << "% Message received: <" << record.topic() << "> " << record.value().toString() << std::endl;
 
             results.push(record.value().toString());
         } else {
-            // TODO: clean up and add an exception?
-            cerr << record.toString() << endl;
+// DEBUG: to add logging
+//debug:            cerr << record.toString() << endl;
             lock_guard<mutex> lk(kafka_mutex);
             lasterror = record.error(); // passive reporting
             throw MessagingException(record.toString());

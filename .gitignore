@@ -1,5 +1,6 @@
 # Ignore IDE folders and files
 *.vscode/
+*.cache/
 .idea/
 **/libs/
 .DS_Store
