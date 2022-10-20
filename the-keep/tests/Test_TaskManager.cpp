@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include "../core/task-manager/TaskManager.hpp"
+#include "core/task-manager/TaskManager.hpp"
 
 using namespace std;
 

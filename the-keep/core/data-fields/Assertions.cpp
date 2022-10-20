@@ -13,7 +13,7 @@
 #include <jsoncpp/json/json.h>
 
 #include "Assertions.hpp"
-#include "../HelperFunctions.hpp"
+#include "core/HelperFunctions.hpp"
 #include "Config.hpp"
 #include "Constants.hpp"
 

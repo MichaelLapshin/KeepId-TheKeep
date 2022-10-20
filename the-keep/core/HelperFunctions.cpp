@@ -7,7 +7,7 @@
 
 #include <string>
 #include <vector>
-#include <unique_ptr>
+#include <memory>
 
 #include <jsoncpp/json/json.h>
 
@@ -31,8 +31,9 @@ int findIndexOfStringInVector(const vector<string>& list, const string& search) 
 Json::Value parseJsonString(string json_str){
     // Create JsonCpp objects necessary for parsing the Json string
     Json::Value json_obj;
-    Json::CharReaderBuilder builder;
-    unique_ptr<Json::CharReader> reader = make_unique(builder.newCharReader()); // TODO: double check if this unique_ptr pointer syntax is correct
+    Json::CharReaderBuilder jsonReaderBuilder;
+    unique_ptr<Json::CharReader> const reader(jsonReaderBuilder.newCharReader());
+
     Json::String errors;
 
     // Parse the string

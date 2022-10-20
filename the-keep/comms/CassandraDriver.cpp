@@ -128,6 +128,7 @@ TheKeepRecord CassandraDriver::get(const long userid, const int fieldid)
     const char *message;
     size_t message_length;
     cass_future_error_message(connect_future, &message, &message_length);
+    
     fprintf(stderr, "KeepDB->Cassandra: Unable to connect: '%.*s'\n", (int)message_length, message);
   }
 

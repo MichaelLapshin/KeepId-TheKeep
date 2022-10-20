@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 add_executable(${PROJECT_NAME}UnitTests tests/test_main.cpp)
 
 ### Main subdirectories to include ###
+include_directories(.)
 add_subdirectory(comms)
 add_subdirectory(core)
 add_subdirectory(tests)

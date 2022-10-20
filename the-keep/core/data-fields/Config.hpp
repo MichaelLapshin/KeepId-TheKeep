@@ -9,7 +9,7 @@
 
 #include <string>
 #include <vector>
-#include <unique_ptr>
+#include <memory>
 
 #include <jsoncpp/json/json.h>
 
@@ -60,5 +60,5 @@ class Config{
     private:
         // Variables
         static inline bool initialized_ = false;
-        static inline std::unique_ptr<Json::Value> data_field_config_ = nullptr;
+        static inline std::unique_ptr<Json::Value> data_field_config_;  // initializes with nullptr
 };

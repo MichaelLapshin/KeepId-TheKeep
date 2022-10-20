@@ -8,9 +8,10 @@
 #pragma once
 
 #include <string>
-#include <unique_ptr>
+#include <memory>
 
-#include "../cryptography-wrappers/CryptoWrapper.hpp"
+#include "core/cryptography-wrappers/CryptoWrapper.hpp"
+#include "core/cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
 
 using namespace std;
 
@@ -80,5 +81,5 @@ class KeyManager {
         inline static string private_key_ = "";
 
         // Manager variables
-        inline static std::unique_ptr<CryptoWrapper> crypto_wrapper_ = make_unique<CryptoWrapper_Cryptopp>();
+        inline static std::unique_ptr<CryptoWrapper> crypto_wrapper_{new CryptoWrapper_Cryptopp()};
 };

@@ -15,8 +15,8 @@
 
 #include "TaskManager.hpp"
 #include "TaskLogic.cpp"
-#include "../key-manager/KeyManager.hpp"
-#include "../data-fields/Assertions.hpp"
+#include "core/key-manager/KeyManager.hpp"
+#include "core/data-fields/Assertions.hpp"
 
 using namespace std;
 
