@@ -11,7 +11,7 @@
 #include <filesystem>
 
 #include "KeyManager.hpp"
-#include "../cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
+#include "core/cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
 
 using namespace std;
 

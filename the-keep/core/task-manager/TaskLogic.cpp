@@ -11,11 +11,11 @@
 
 #include <jsoncpp/json/json.h>
 
-#include "../HelperFunctions.hpp"
-#include "../key-manager/KeyManager.hpp"
-#include "../data-fields/Assertions.hpp"
-#include "../data-fields/Constants.hpp"
-#include "../data-fields/Config.hpp"
+#include "core/HelperFunctions.hpp"
+#include "core/key-manager/KeyManager.hpp"
+#include "core/data-fields/Assertions.hpp"
+#include "core/data-fields/Constants.hpp"
+#include "core/data-fields/Config.hpp"
 
 using namespace std;
 

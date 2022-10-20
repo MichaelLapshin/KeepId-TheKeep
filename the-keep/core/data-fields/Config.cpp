@@ -7,7 +7,7 @@
 
 #include <string>
 #include <fstream>
-#include <unqiue_ptr>
+// already included #include <unqiue_ptr>
 
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/reader.h>
@@ -15,7 +15,7 @@
 #include "Config.hpp"
 #include "Constants.hpp"
 #include "Assertions.hpp"
-#include "../HelperFunctions.hpp"
+#include "core/HelperFunctions.hpp"
 
 using namespace std;
 
@@ -33,8 +33,8 @@ void Config::initialize(){
     // Creates config Json object
     Json::CharReaderBuilder json_builder;
     string err_msg;
-    Config::data_field_config_ = make_unique(Json::Value());
-    bool parse_success = Json::parseFromStream(json_builder, file_input_stream, Config::data_field_config_, &err_msg);
+    Config::data_field_config_ = make_unique<Json::Value>(Json::Value());
+    bool parse_success = Json::parseFromStream(json_builder, file_input_stream, Config::data_field_config_.get(), &err_msg);
     
     // Handles parsing errors
     if (!parse_success){
