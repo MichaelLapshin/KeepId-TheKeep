@@ -1,6 +1,7 @@
 # Add HelperFunctions
 add_library(HelperFunctions STATIC
     HelperFunctions.cpp
+    Logger.cpp
 )
 message("Added HelperFunctions library.")
 

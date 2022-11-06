@@ -9,6 +9,7 @@
 #include <thread>
 #include <chrono>
 
+#include "core/Logger.hpp"
 #include "core/key-manager/KeyManager.hpp"
 #include "core/task-manager/TaskManager.hpp"
 #include "core/data-fields/Config.hpp"
@@ -21,6 +22,7 @@
 using namespace std;
 using namespace thekeep;
 
+
 int main(int argc, char *argv[]){
     // Starts the Keep
     cout << "Initializing the Keep... ";
@@ -28,10 +30,18 @@ int main(int argc, char *argv[]){
     Config::initialize();
     cout << "Done." << endl;
 
+    DEBUG("test of the debugger");
+
+   // create color multi threaded logger
+    auto console = spdlog::stdout_color_mt("console");    
+    auto err_logger = spdlog::stderr_color_mt("stderr");    
+    spdlog::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name)");
+
+
     TaskManager worker{};
 
     // Development test --- TODO: remove this
-/*
+/**/
     unique_ptr<TheKeepMessaging> kd = make_unique<KafkaDriver>();
     kd->initialize("");
     kd->subscribe("keepid-tests");
@@ -48,7 +58,7 @@ int main(int argc, char *argv[]){
                messages.pop();
         }
     }
-
+/*
     TheKeepDB *db = new CassandraDriver();
     db->connect(CASSANRDA_URL,"cassandra","cassandra");
     TheKeepRecord data = db->get(123,23);

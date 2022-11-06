@@ -20,3 +20,8 @@ RUN  cd /tmp && git clone https://github.com/datastax/cpp-driver.git \
 # installation of modern-cpp-kafka Kafka header-only library
 RUN  cd /tmp && git clone https://github.com/morganstanley/modern-cpp-kafka.git \
      && cd /tmp/modern-cpp-kafka/include && cp -r kafka /usr/local/include
+
+# installation of Combat-Spdlog header-only library
+RUN  cd /tmp && git clone https://github.com/gabime/spdlog.git \
+     && cd /tmp/spdlog/include && cp -r spdlog /usr/local/include
+  
