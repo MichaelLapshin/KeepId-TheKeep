@@ -25,10 +25,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
 ### Indicates which file is the executable ###
 message("Building the Keep debug...")
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp ServerConfig.cpp)
 add_executable(${PROJECT_NAME}UnitTests tests/test_main.cpp)
 
 ### Main subdirectories to include ###
@@ -55,10 +54,14 @@ message("RD-CPP-Kafka library found at: ${RD_KAFKA_PATH}")
 find_library(CASSANDRA_DRIVER_PATH cassandra) # -lcassandra
 message("Cassandra-CPP-Driver found at: ${CASSANDRA_DRIVER_PATH}")
 
+# Copy required data files from the source of the project
+file(COPY ../data-fields-config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/build)   
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../KeepPrivateKey.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/build)   
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../KeepPublicKey.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/build)   
 
 ### Adds targets ###
 target_link_libraries(${PROJECT_NAME}
-  rdkafka
+  rdkafka 
   ${CASSANDRA_DRIVER_PATH}
   jsoncpp
   crypto++

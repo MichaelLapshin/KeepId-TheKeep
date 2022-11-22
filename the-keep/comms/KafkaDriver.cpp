@@ -6,10 +6,12 @@
  * 
  * Uses: https://github.com/morganstanley/modern-cpp-kafka (Morgan Stanley)
  */
+
 #include <kafka/Types.h>
 #include <kafka/KafkaConsumer.h>
 #include <kafka/KafkaProducer.h>
 
+#include "core/Logger.hpp"
 #include "CommErrors.hpp"
 #include "CommsConfig.hpp"
 #include "KafkaDriver.hpp"
@@ -81,12 +83,13 @@ int KafkaDriver::send(const string& topic, const string& message)
                     [&,line](const producer::RecordMetadata& metadata, const kafka::Error& error) {
                             if (!error) {
                                 // DEBUG: to add logging
-                                std::cout << "% Message delivered: " << metadata.toString() << std::endl;
+ //                               DEBUG("% Message delivered: " << metadata.toString());
                             } else {
                                 scoped_lock(this->kafka_mutex);
                                 this->lasterror = error;
+
                                 // DEBUG: to add logging
-                                std::cerr << "% Message delivery failed: " << error.message() << std::endl;
+//                                 ERROR("% Message delivery failed: " << error.message());
                             }
                          });
     return 0;
@@ -108,21 +111,20 @@ queue<string> KafkaDriver::receive(const string& topic, int timeoutms)
         if (!record.error()) {
             // some debugging; clean after tests:
             //
-            // std::cout << "Got a new message..." << std::endl;
-            // std::cout << "    Topic    : " << record.topic() << std::endl;
-            // std::cout << "    Partition: " << record.partition() << std::endl;
-            // std::cout << "    Offset   : " << record.offset() << std::endl;
-            // std::cout << "    Timestamp: " << record.timestamp().toString() << std::endl;
-            // std::cout << "    Headers  : " << kafka::toString(record.headers()) << std::endl;
-            // std::cout << "    Key   [" << record.key().toString() << "]" << std::endl;
-            // std::cout << "    Value [" << record.value().toString() << "]" << std::endl;
+            // DEBUG("Got a new message...");
+            // DEBUG("    Topic    : " << record.topic());
+            // DEBUG("    Partition: " << record.partition());
+            // DEBUG("    Offset   : " << record.offset());
+            // DEBUG("    Timestamp: " << record.timestamp().toString());
+            // DEBUG("    Headers  : " << kafka::toString(record.headers()));
+            // DEBUG("    Key   [" << record.key().toString() << "]");
+            // DEBUG("    Value [" << record.value().toString() << "]");
 
-            std::cout << "% Message received: <" << record.topic() << "> " << record.value().toString() << std::endl;
+// DEBUG:  DEBUG("% Message received: <" << record.topic() << "> " << record.value().toString());
 
             results.push(record.value().toString());
         } else {
-            // TODO: clean up and add an exception?
-            cerr << record.toString() << endl;
+            ERROR(record.toString());
             lock_guard<mutex> lk(kafka_mutex);
             lasterror = record.error(); // passive reporting
             throw MessagingException(record.toString());
