@@ -4,11 +4,6 @@
  * @author: KeepId 
  * @date: March 6, 2022
  */
-
-#include <thread>
-#include <atomic>
-#include <assert.h>
-
 #include <jsoncpp/json/json.h>
 
 #include "core/HelperFunctions.hpp"
@@ -16,13 +11,9 @@
 #include "core/data-fields/Assertions.hpp"
 #include "core/data-fields/Constants.hpp"
 #include "core/data-fields/Config.hpp"
+#include "TaskLogic.hpp"
 
 using namespace std;
-
-// Function declaration
-void workLoop(const atomic<bool> &loop_thread);
-void userDataUpdateTask(const string& data_update_input);
-void userDataRequestTask(const string& data_request_input);
 
 /**
  * workLoop()

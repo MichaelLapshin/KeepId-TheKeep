@@ -31,13 +31,11 @@ int main(int argc, char *argv[]){
     KeepLogger::initialize();
     spdlog::info("SpdLog: TheKeep initialization has done.");
 
-    DEBUG("test of the debugger");
+    DEBUG("test of the debug logger macro");
     KeepLogger::flash();
 
-    TaskManager worker{};
-
     // Development test --- TODO: remove this
-/*
+/* * /
     unique_ptr<TheKeepMessaging> kd = make_unique<KafkaDriver>();
     kd->initialize("");
     kd->subscribe("keepid-tests");
@@ -54,14 +52,16 @@ int main(int argc, char *argv[]){
                messages.pop();
         }
     }
-/ ** /
+/ * */
     TheKeepDB *db = new CassandraDriver();
     db->connect(CASSANRDA_URL,"cassandra","cassandra");
     TheKeepRecord data = db->get(123,23);
     DEBUG("test: ");
     DEBUG(data.userid << " - " << data.fieldid << ": " << data.chip);
     delete db;
-*/
+// * /
+
+    TaskManager worker{};
 
     // Starts the command line interface
     bool is_running = true;

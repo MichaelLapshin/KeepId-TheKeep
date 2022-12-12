@@ -24,4 +24,7 @@ RUN  cd /tmp && git clone https://github.com/morganstanley/modern-cpp-kafka.git 
 # installation of Combat-Spdlog header-only library
 RUN  cd /tmp && git clone https://github.com/gabime/spdlog.git \
      && cd /tmp/spdlog/include && cp -r spdlog /usr/local/include
-  
+
+# Attempt to move the Docker container to EST time zone 
+#RUN echo "America/New_York" > /etc/timezone
+#RUN dpkg-reconfigure -f noninteractive tzdata  
