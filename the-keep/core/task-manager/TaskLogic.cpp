@@ -12,6 +12,7 @@
 #include "core/data-fields/Constants.hpp"
 #include "core/data-fields/Config.hpp"
 #include "TaskLogic.hpp"
+#include "MessageClient.hpp"
 
 using namespace std;
 
@@ -25,8 +26,17 @@ void workLoop(const atomic<bool> &loop_thread){
         /////////////////////////////////////////////
         ///  Poll and execute user-data updating  ///
         /////////////////////////////////////////////
+
+        // TODO:
+        thekeep::MessageClient* messageClient = new thekeep::MessageClient();
+        messageClient->send();
+        
         try {
-            const string data_update_str_json; // = MessageClient.PollFetchDataUpdate() // Contains user_id, encrypted_data_fields
+
+            // TODO: 
+            const string data_update_str_json = messageClient->pollFetchDataUpdate(); // Contains user_id, encrypted_data_fields
+
+
             userDataUpdateTask(data_update_str_json);
         } catch(const std::runtime_error& exception) {
             // TODO: Log the exception
@@ -37,8 +47,11 @@ void workLoop(const atomic<bool> &loop_thread){
         ///     Poll and execute data-request     ///
         /////////////////////////////////////////////
         try {
-            const string data_request_str_json; // = MessageClient.fetchUserDataRequest() // Contains user_id, request_id, private_keys, public_keys
+
+                    // TODO:
+            const string data_request_str_json = messageClient->fetchUserDataRequest(); // Contains user_id, request_id, private_keys, public_keys
             userDataRequestTask(data_request_str_json);
+            
         } catch(const std::runtime_error& exception) {
             // TODO: Log the exception.
             // TODO: Redact and ropagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.

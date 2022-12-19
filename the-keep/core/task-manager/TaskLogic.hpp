@@ -4,6 +4,7 @@
  * @author: KeepId  {IL}
  * @date: December 11, 2022
  */
+#pragma once
 #include <atomic>
 #include <string>
 
