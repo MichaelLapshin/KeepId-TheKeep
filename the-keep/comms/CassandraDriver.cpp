@@ -10,8 +10,7 @@ using namespace thekeep;
 
 int CassandraDriver::connect(const string &ip, const string &user, const string &pwd)
 {
-  /* Setup and connect to Cassandra cluster */
-  //connect_future = NULL;        // CassFuture*
+  /* Setup and connect to Cassandra cluster */     
   cluster = cass_cluster_new();   // CassCluster*
   session = cass_session_new();   // CassSession*
   const char *hosts = ip.c_str(); // 
@@ -21,7 +20,7 @@ int CassandraDriver::connect(const string &ip, const string &user, const string 
   cass_cluster_set_credentials(cluster, user.c_str(), pwd.c_str()); 
 
   /* Provide the cluster object as configuration to connect the session */
-  connect_future = cass_session_connect(session, cluster);
+  connect_future = cass_session_connect(session, cluster); // CassFuture*
 
   // dup todo
   if (cass_future_error_code(connect_future) == CASS_OK)

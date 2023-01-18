@@ -7,19 +7,29 @@
 #pragma once
 #include <unistd.h>  // for sleep()
 #include "core/Logger.hpp"
+#include "comms/CommsConfig.hpp"
 #include "comms/TheKeepDB.hpp"
 #include "comms/TheKeepMessaging.hpp"
 
 namespace thekeep {
+    using namespace std;
+
     class MessageClient 
     {       
         TheKeepMessaging *km;
         TheKeepDB* kdb; 
 
       public:
-        MessageClient(TheKeepMessaging *km, TheKeepDB* kdb): km(km), kdb(kdb)
+        MessageClient(TheKeepMessaging *km, TheKeepDB *kdb): km(km), kdb(kdb)
         {
-            // TODO: null pts checks if any needed
+            // null pts checks just in case (change to reference?)
+            if(!km || !kdb) 
+            {
+                throw runtime_error("MessageClient initialized with a NULL object");
+            }
+
+            km->subscribe(KAFKA_CONTROL_TOPIC);
+            km->subscribe(KAFKA_DATA_TOPIC);
         }
 
         const string pollFetchDataUpdate() const
@@ -37,18 +47,16 @@ namespace thekeep {
 
         void send() 
         {
-            using namespace std;
-            unique_ptr<TheKeepMessaging> kd = make_unique<KafkaDriver>();
-            kd->initialize("");
-            kd->subscribe("keepid-tests");
-            kd->send("keepid-tests", "test-c++ 1235");
-            kd->send("keepid-tests", "test-c++ 123567");
+            km->initialize("");
+            km->subscribe("keepid-tests");
+            km->send("keepid-tests","test-c++ 1235");
+            km->send("keepid-tests","test-c++ 123567");
 
             queue<string> messages;
             for (int i = 0; i < 100; i++)
             {
                 sleep(1);
-                messages = kd->receive("keepid-tests", 100);
+                messages = km->receive(KAFKA_DATA_TOPIC, 100);
                 while (!messages.empty())
                 {
                     DEBUG("tick: " + to_string(i) + " -> " + messages.front());

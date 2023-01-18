@@ -64,14 +64,25 @@ int main(int argc, char *argv[]){
     DEBUG("test: ");
     DEBUG(data.userid << " - " << data.fieldid << ": " << data.chip);
     delete db;
+    KeepLogger::flash();
 // * /
+
+// Non-threading task testing
+
+
+
+
+
+
+
 
     TaskManager worker{};
 
     // Starts the command line interface
     bool is_running = true;
     while(is_running){
-        // Parses the a
+        // Parses the command
+        cout << "Server status: " << (worker.isRunning()? "running":"stopped") << " Enter the command: ";
         string input; 
         cin >> input;
 

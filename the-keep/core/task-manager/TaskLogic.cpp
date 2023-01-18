@@ -14,48 +14,87 @@
 #include "TaskLogic.hpp"
 #include "MessageClient.hpp"
 
+#include "comms/KafkaDriver.hpp"
+#include "comms/CassandraDriver.hpp"
+
 using namespace std;
+using namespace thekeep;
+
+thekeep::MessageClient* initialize() {
+
+    unique_ptr<TheKeepMessaging> kd = make_unique<thekeep::KafkaDriver>();
+    kd->initialize("");
+    kd->subscribe("keepid-tests");
+    kd->send("keepid-tests", "test-c++ 1235");
+    kd->send("keepid-tests", "test-c++ 123567");
+    return NULL;
+}
 
 /**
  * workLoop()
  * @brief The method that would be run whenever
  *        the task manager is started.
  */
-void workLoop(const atomic<bool> &loop_thread){
-    while(loop_thread){
-        /////////////////////////////////////////////
-        ///  Poll and execute user-data updating  ///
-        /////////////////////////////////////////////
+void workLoop(const atomic<bool> &loop_thread)
+{
+    // TODO:
+    try
+    {
 
-        // TODO:
-        thekeep::MessageClient* messageClient = new thekeep::MessageClient();
+        vector<string> topics{"keepid-tests"};
+        // vector<string> topics{KAFKA_CONTROL_TOPIC, KAFKA_DATA_TOPIC};
+        KafkaDriver *kd = new KafkaDriver(KAFKA_URL, topics);
+        TheKeepMessaging *km = kd;
+        TheKeepDB *kdb = new CassandraDriver();
+        kdb->connect(CASSANRDA_URL, CASSANRDA_USER, CASSANRDA_PASSWORD);
+
+        thekeep::MessageClient *messageClient = new thekeep::MessageClient(km, kdb);
         messageClient->send();
-        
-        try {
 
-            // TODO: 
-            const string data_update_str_json = messageClient->pollFetchDataUpdate(); // Contains user_id, encrypted_data_fields
+        while (loop_thread)
+        {
+            /////////////////////////////////////////////
+            ///  Poll and execute user-data updating  ///
+            /////////////////////////////////////////////
+            try
+            {
 
+                // test
+                messageClient->send();
 
-            userDataUpdateTask(data_update_str_json);
-        } catch(const std::runtime_error& exception) {
-            // TODO: Log the exception
-            // TODO: Redact and propagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+                // TODO:
+                const string data_update_str_json = messageClient->pollFetchDataUpdate(); // Contains user_id, encrypted_data_fields
+
+                userDataUpdateTask(data_update_str_json);
+            }
+            catch (const std::runtime_error &exception)
+            {
+                // TODO: Log the exception
+                // TODO: Redact and propagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+            }
+
+            /////////////////////////////////////////////
+            ///     Poll and execute data-request     ///
+            /////////////////////////////////////////////
+            try
+            {
+
+                // TODO:
+                const string data_request_str_json = messageClient->fetchUserDataRequest(); // Contains user_id, request_id, private_keys, public_keys
+                userDataRequestTask(data_request_str_json);
+            }
+            catch (const std::runtime_error &exception)
+            {
+                // TODO: Log the exception.
+                // TODO: Redact and ropagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+            }
         }
-
-        /////////////////////////////////////////////
-        ///     Poll and execute data-request     ///
-        /////////////////////////////////////////////
-        try {
-
-                    // TODO:
-            const string data_request_str_json = messageClient->fetchUserDataRequest(); // Contains user_id, request_id, private_keys, public_keys
-            userDataRequestTask(data_request_str_json);
-            
-        } catch(const std::runtime_error& exception) {
-            // TODO: Log the exception.
-            // TODO: Redact and ropagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
-        }
+    }
+    catch (const std::runtime_error &exception)
+    {
+        // TODO: Log the exception
+        // TODO: Redact and propagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+        ERROR("WorkLoop exception: ", exception.what());
     }
 }
 

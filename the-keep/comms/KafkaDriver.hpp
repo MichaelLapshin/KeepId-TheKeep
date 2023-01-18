@@ -12,9 +12,8 @@
 
 #include "TheKeepMessaging.hpp"
 
-using namespace std;
-
 namespace thekeep {
+    using namespace std;
 
     // generic Messaging interface for The Keep; per subscription/topic
     class KafkaDriver : public TheKeepMessaging {

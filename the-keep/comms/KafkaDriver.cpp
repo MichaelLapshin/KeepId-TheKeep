@@ -20,12 +20,11 @@ using namespace kafka;
 using namespace kafka::clients;
 using namespace thekeep;
 
-
 KafkaDriver::KafkaDriver(const string& kafka_server, const vector<string>& topics)
 {
     initialize(kafka_server);
     ranges::for_each(topics,[&](const string& topic) { subscribe(topic); }); // C++20
-//alt:  for(auto topic:topics) { subscribe(topic); } // C++17
+//alt: for(auto topic:topics) { subscribe(topic); } // C++17
 }
 
 void KafkaDriver::initialize(const string& kafka_server) 
@@ -33,12 +32,12 @@ void KafkaDriver::initialize(const string& kafka_server)
     // Create configuration object
     kafka::Properties props({
                              {"bootstrap.servers",  KAFKA_URL.c_str()},
-                             {"enable.idempotence", "true"},
+                             {"enable.idempotence", "true"}, // producer only property; ignored for consumer
                             });
 
     // Create a producer and consumer instances
     producer = make_unique<KafkaProducer>(props);
-    consumer = make_unique<KafkaConsumer>(props);
+    consumer = make_unique<KafkaConsumer>(props); // 'idempotence' is a producer only property; ignored for consumer
 }
 
 void KafkaDriver::subscribe(const string& topic)
@@ -98,11 +97,12 @@ int KafkaDriver::send(const string& topic, const string& message)
 queue<string> KafkaDriver::receive(const string& topic, int timeoutms) 
 {
     // Automatically Subscribe to topics
-    subscribe(topic); // Check if already subscribed; if now - subscribe
+ // must be explicit   subscribe(topic); // Check if already subscribed; if now - subscribe
     
     queue<string> results;
 
     auto records = consumer->poll(std::chrono::milliseconds(timeoutms));
+    kafka::Topic ktopic(topic); // converts 'string' to 'Topic' type, which is actually as std:string as well 
 
     for (const auto& record: records) {
         
@@ -122,7 +122,10 @@ queue<string> KafkaDriver::receive(const string& topic, int timeoutms)
 
 // DEBUG:  DEBUG("% Message received: <" << record.topic() << "> " << record.value().toString());
 
-            results.push(record.value().toString());
+            if(record.topic() == ktopic)  // only read messages from relevant topics; what happens with others?
+                results.push(record.value().toString());
+            // TODO: handle case for multiple topics to be sure the messages are not lost!!!!
+
         } else {
             ERROR(record.toString());
             lock_guard<mutex> lk(kafka_mutex);

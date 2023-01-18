@@ -32,3 +32,6 @@ add_library(DataFields STATIC
     HelperFunctions.cpp
 )
 message("Added Assertions library.")
+
+# dependencies
+target_link_libraries(TaskManager DBnMessaging)

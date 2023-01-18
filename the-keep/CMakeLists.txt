@@ -58,6 +58,7 @@ message("Cassandra-CPP-Driver found at: ${CASSANDRA_DRIVER_PATH}")
 file(COPY ../data-fields-config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/build)   
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../KeepPrivateKey.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/build)   
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../KeepPublicKey.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/build)   
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/comms/KeepId-KafkaTopics.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) #?
 
 ### Adds targets ###
 target_link_libraries(${PROJECT_NAME}

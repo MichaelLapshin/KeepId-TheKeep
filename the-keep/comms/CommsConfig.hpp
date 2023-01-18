@@ -23,5 +23,7 @@ namespace thekeep {
     const std::string CASSANRDA_URLPORT = "thekeep_cassandra:7007"; // maybe "127.0.0.1:7007"
     const std::string CASSANRDA_DB = "KeepId";
     const std::string CASSANRDA_SCHEMA = "KeepIdCow";
+    const std::string CASSANRDA_USER = "cassandra";
+    const std::string CASSANRDA_PASSWORD = "cassandra";
 
 } // namespace thekeep
