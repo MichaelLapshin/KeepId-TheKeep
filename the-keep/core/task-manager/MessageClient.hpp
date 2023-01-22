@@ -32,6 +32,16 @@ namespace thekeep {
             km->subscribe(KAFKA_DATA_TOPIC);
         }
 
+        // We have to set up a messaging loop; the Kafka does not 
+        // allow to pick up data from a specific topic
+        const string pollFetch() const
+        {
+            static auto q = km->receive();
+            const string& msg=q.front();
+            q.pop();
+            return msg; // picks up only the very frist messasge - chceck how to handle this TODO
+        }
+
         const string pollFetchDataUpdate() const
         {
             auto q = km->receive("topic",60);
@@ -42,13 +52,15 @@ namespace thekeep {
         
         const string fetchUserDataRequest() const
         {
+            
+            
             return "";
         }
 
         void send() 
         {
-            km->initialize("");
-            km->subscribe("keepid-tests");
+            //km->initialize("");
+            //km->subscribe("keepid-tests");
             km->send("keepid-tests","test-c++ 1235");
             km->send("keepid-tests","test-c++ 123567");
 
