@@ -14,12 +14,20 @@
 namespace thekeep {
     using namespace std;
 
+    // idea: a MessageClient per topic.. or area of interest; 
+    // we would need to separate Data and Conrtol messaging flows; 
+    // Messsage Client keeps its internal queue of received messages
+    // and return them one by one
+    // it's initialized from outside with a list? or single topic
+
     class MessageClient 
     {       
         TheKeepMessaging *km;
         TheKeepDB* kdb; 
+        queue<string> messages; // FIFO queue
 
       public:
+        // TODO: receive / sent topics constructor. Add built-in initialization
         MessageClient(TheKeepMessaging *km, TheKeepDB *kdb): km(km), kdb(kdb)
         {
             // null pts checks just in case (change to reference?)
