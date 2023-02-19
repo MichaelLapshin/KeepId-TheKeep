@@ -17,7 +17,7 @@ namespace thekeep {
     class MessageClient 
     {       
         TheKeepMessaging *km;
-        TheKeepDB* kdb; 
+        TheKeepDB* kdb;     
 
       public:
         MessageClient(TheKeepMessaging *km, TheKeepDB *kdb): km(km), kdb(kdb)
@@ -28,7 +28,7 @@ namespace thekeep {
                 throw runtime_error("MessageClient initialized with a NULL object");
             }
 
-            km->subscribe(KAFKA_CONTROL_TOPIC);
+            km->subscribe(KAFKA_CONTROL_TOPIC);  // todo: another messaging object
             km->subscribe(KAFKA_DATA_TOPIC);
         }
 
