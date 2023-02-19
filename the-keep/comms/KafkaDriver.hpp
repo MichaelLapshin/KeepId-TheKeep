@@ -17,8 +17,8 @@ namespace thekeep {
 
     // generic Messaging interface for The Keep; per subscription/topic
     class KafkaDriver : public TheKeepMessaging {
-            unique_ptr<kafka::clients::KafkaProducer> producer;
-            unique_ptr<kafka::clients::KafkaConsumer> consumer;
+            unique_ptr<kafka::clients::producer::KafkaProducer> producer;
+            unique_ptr<kafka::clients::consumer::KafkaConsumer> consumer;
             mutex      kafka_mutex;  // for error preservation
             kafka::Error lasterror; // Kafka last error; naive approach for now: clean after read
         public:
