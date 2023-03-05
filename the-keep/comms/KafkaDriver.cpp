@@ -36,8 +36,8 @@ void KafkaDriver::initialize(const string& kafka_server)
                             });
 
     // Create a producer and consumer instances
-    producer = make_unique<KafkaProducer>(props);
-    consumer = make_unique<KafkaConsumer>(props); // 'idempotence' is a producer only property; ignored for consumer
+    producer = make_unique<producer::KafkaProducer>(props);
+    consumer = make_unique<consumer::KafkaConsumer>(props); // 'idempotence' is a producer only property; ignored for consumer
 }
 
 void KafkaDriver::subscribe(const string& topic)
