@@ -10,6 +10,7 @@
 #include <kafka/Types.h>
 #include <kafka/KafkaConsumer.h>
 #include <kafka/KafkaProducer.h>
+#include <librdkafka/rdkafkacpp.h>
 
 #include "core/Logger.hpp"
 #include "CommErrors.hpp"
@@ -24,29 +25,35 @@ KafkaDriver::KafkaDriver(const string& kafka_server, const vector<string>& topic
 {
     initialize(kafka_server);
     ranges::for_each(topics,[&](const string& topic) { subscribe(topic); }); // C++20
-//alt: for(auto topic:topics) { subscribe(topic); } // C++17
+//alt:   for(auto topic:topics) { subscribe(topic); } // C++17
 }
 
 void KafkaDriver::initialize(const string& kafka_server) 
 {
-    // Create configuration object
+    // Alternative configuration:
+    // kafka::Properties props;
+    // props.put("bootstrap.servers", "KAFKA_URL");
+    // props.put("group.id", "KAFKA_URL");
+    // props.put("enable.auto.commit", "false");
+
+    // Prepare the configuration
     kafka::Properties props({
-                             {"bootstrap.servers",  KAFKA_URL.c_str()},
-                             {"enable.idempotence", "true"}, // producer only property; ignored for consumer
+                             {"bootstrap.servers",  {KAFKA_URL.c_str()}},
+                             {"enable.idempotence", {"true"}},
                             });
 
     // Create a producer and consumer instances
-    producer = make_unique<producer::KafkaProducer>(props);
-    consumer = make_unique<consumer::KafkaConsumer>(props); // 'idempotence' is a producer only property; ignored for consumer
+    producer = make_unique<clients::producer::KafkaProducer>(props);
+    consumer = make_unique<clients::consumer::KafkaConsumer>(props); // 'idempotence' is a producer only property; ignored for consumer
 }
 
 void KafkaDriver::subscribe(const string& topic)
 {
     // Check if already subscribed; if now - subscribe
     const Topic& newtopic(topic);  // type conversion; it's identical now
-    if(!consumer->subscription().contains(newtopic)) {
+    // if(!consumer->subscription().contains(newtopic)) {  // containc() isC++20 
         consumer->subscribe({newtopic});  // don't unsubscribe: static configuration
-    }
+    // }
 }
 
 void KafkaDriver::subscribe(const set<string>& topics) 
@@ -93,6 +100,18 @@ int KafkaDriver::send(const string& topic, const string& message)
                          });
     return 0;
 }
+
+
+// TODO:
+queue<string> KafkaDriver::receive(int timeoutms) 
+{
+    // Automatically Subscribe to topics
+ // must be explicit   subscribe(topic); // Check if already subscribed; if now - subscribe
+    
+    queue<string> results;
+    return results;
+}
+
 
 queue<string> KafkaDriver::receive(const string& topic, int timeoutms) 
 {

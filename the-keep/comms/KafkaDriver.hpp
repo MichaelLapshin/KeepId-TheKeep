@@ -30,7 +30,7 @@ namespace thekeep {
             virtual void subscribe(const set<string>& topics);        
             virtual void unsubscribe(const string& topic);        
             virtual int send(const string& topic, const string& message);
-            virtual queue<string> receive(int timeoutms=1000); 
+            virtual queue<string> receive(int timeoutms); 
             virtual queue<string> receive(const string& topic, int timeoutms); // to retire
             virtual string last_error(); // reads and cleans the last error        
     };

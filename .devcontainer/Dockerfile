@@ -7,7 +7,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/cpp:0-${VARIANT}
 # [Optional] Uncomment this section to install additional packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
      && apt-get -y install --no-install-recommends \
-        librdkafka-dev libcrypto++-dev libgtest-dev libjsoncpp-dev \
+        # librdkafka-dev \
+        libcrypto++-dev libgtest-dev libjsoncpp-dev \
         libkrb5-dev libuv1-dev \
         libssl-dev \
         zlib1g-dev
@@ -17,8 +18,12 @@ RUN  cd /tmp && git clone https://github.com/datastax/cpp-driver.git \
      && cd cpp-driver && mkdir build && cd build \
      && cmake .. && make && make install && cd ..
 
-# installation of modern-cpp-kafka Kafka header-only library
-RUN  cd /tmp && git clone https://github.com/morganstanley/modern-cpp-kafka.git \
+# download source and compilation of librdkafka Kafka library -b v2.0.2 (compatible with modern-cpp-kafka v2023.03.07)
+RUN  cd /tmp && git clone https://github.com/confluentinc/librdkafka.git -b v2.0.2 \
+     && cd /tmp/librdkafka && ./configure --install-deps && make && sudo make install
+
+# installation of modern-cpp-kafka Kafka header-only library -b v2023.03.07 (compatible with librdkafka v2.0.2)
+RUN  cd /tmp && git clone https://github.com/morganstanley/modern-cpp-kafka.git -b v2023.03.07 \
      && cd /tmp/modern-cpp-kafka/include && cp -r kafka /usr/local/include
 
 # installation of Combat-Spdlog header-only library

@@ -35,6 +35,7 @@ int CassandraDriver::connect(const string &ip, const string &user, const string 
     size_t message_length;
     cass_future_error_message(connect_future, &message, &message_length);
     ERROR("KeepDB->Cassandra: Unable to connect: {}", message);
+    std::cout << "err:" << message << endl;
   }
 
   return 0;
