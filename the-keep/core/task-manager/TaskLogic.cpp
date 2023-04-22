@@ -37,10 +37,9 @@ thekeep::MessageClient* initialize() {
  */
 void workLoop(const atomic<bool> &loop_thread)
 {
-    // TODO:
     try
     {
-
+        // TODO: move initialization logic to MessageClient
         vector<string> topics{"keepid-tests"};
         // vector<string> topics{KAFKA_CONTROL_TOPIC, KAFKA_DATA_TOPIC};
         KafkaDriver *kd = new KafkaDriver(KAFKA_URL, topics);
@@ -58,18 +57,15 @@ void workLoop(const atomic<bool> &loop_thread)
             /////////////////////////////////////////////
             try
             {
-
-                // test
                 messageClient->send();
-
-                // TODO:
+                // TODO: test..
                 const string data_update_str_json = messageClient->pollFetchDataUpdate(); // Contains user_id, encrypted_data_fields
 
                 userDataUpdateTask(data_update_str_json);
             }
             catch (const std::runtime_error &exception)
             {
-                // TODO: Log the exception
+                ERROR("WorkLoop execute user-data updating exception: ", exception.what());
                 // TODO: Redact and propagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
             }
 
@@ -78,23 +74,21 @@ void workLoop(const atomic<bool> &loop_thread)
             /////////////////////////////////////////////
             try
             {
-
-                // TODO:
+                // TODO: test
                 const string data_request_str_json = messageClient->fetchUserDataRequest(); // Contains user_id, request_id, private_keys, public_keys
                 userDataRequestTask(data_request_str_json);
             }
             catch (const std::runtime_error &exception)
             {
-                // TODO: Log the exception.
+                ERROR("WorkLoop execute data-request exception: ", exception.what());
                 // TODO: Redact and ropagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
             }
         }
     }
     catch (const std::runtime_error &exception)
     {
-        // TODO: Log the exception
         // TODO: Redact and propagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
-        ERROR("WorkLoop exception: ", exception.what());
+        ERROR("WorkLoop general exception: ", exception.what());
     }
 }
 

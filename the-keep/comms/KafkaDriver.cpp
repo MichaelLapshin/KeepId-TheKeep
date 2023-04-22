@@ -39,23 +39,25 @@ void KafkaDriver::initialize(const string& kafka_server)
     // Prepare the configuration
     kafka::Properties props({
                              {"bootstrap.servers",  {KAFKA_URL.c_str()}},
+                             // 'idempotence' is a producer only property; ignored for consumer
                              {"enable.idempotence", {"true"}},
                             });
 
     // Create a producer and consumer instances
     producer = make_unique<clients::producer::KafkaProducer>(props);
-    consumer = make_unique<clients::consumer::KafkaConsumer>(props); // 'idempotence' is a producer only property; ignored for consumer
+    consumer = make_unique<clients::consumer::KafkaConsumer>(props); 
 }
 
 void KafkaDriver::subscribe(const string& topic)
 {
     // Check if already subscribed; if now - subscribe
     const Topic& newtopic(topic);  // type conversion; it's identical now
-    // if(!consumer->subscription().contains(newtopic)) {  // containc() isC++20 
+    if(!consumer->subscription().contains(newtopic))   // isC++20 
         consumer->subscribe({newtopic});  // don't unsubscribe: static configuration
-    // }
 }
 
+/// @brief Subscribes to multiple topics
+/// @param topics 
 void KafkaDriver::subscribe(const set<string>& topics) 
 {
     const Topics& newtopics(topics); // type conversion; it's identical now
@@ -68,7 +70,7 @@ void KafkaDriver::unsubscribe(const string& topic)
 }
 
 /**
- * @return error code as per Kafka; 0 if ok.  
+ * @return error code as per Kafka (no!); 0 if ok.  
  */
 int KafkaDriver::send(const string& topic, const string& message) 
 {
@@ -80,7 +82,7 @@ int KafkaDriver::send(const string& topic, const string& message)
                                             kafka::Value(line->c_str(), line->size()));
 
     // Send the message
-    // producer->syncSend(record);  // blocking send for testing only
+    // producer->syncSend(record);  // DEBUG: blocking send for testing only
     producer->send(record,
                     // The delivery report handler
                     // Note: Here we capture the shared_pointer of `line`,
@@ -88,31 +90,35 @@ int KafkaDriver::send(const string& topic, const string& message)
                     //       It makes sure the memory block is valid until the lambda finishes.
                     [&,line](const producer::RecordMetadata& metadata, const kafka::Error& error) {
                             if (!error) {
-                                // DEBUG: to add logging
- //                               DEBUG("% Message delivered: " << metadata.toString());
+ //                             DEBUG("% Message delivered: " << metadata.toString()); // via logging
                             } else {
                                 scoped_lock(this->kafka_mutex);
                                 this->lasterror = error;
-
-                                // DEBUG: to add logging
-//                                 ERROR("% Message delivery failed: " << error.message());
+//                              ERROR("% Message delivery failed: " << error.message());
                             }
                          });
     return 0;
 }
 
 
-// TODO:
-queue<string> KafkaDriver::receive(int timeoutms) 
+/// @brief Receive all available messages from subscribed topics
+/// @param timeoutms - receive timeout if no messages are available right away; default: 1000ms
+/// @return a queue/list of messages
+queue<string> KafkaDriver::receive(int timeoutms)
 {
     // Automatically Subscribe to topics
- // must be explicit   subscribe(topic); // Check if already subscribed; if now - subscribe
-    
+    // must be explicit   subscribe(topic); // Check if already subscribed; if now - subscribe
+
     queue<string> results;
+
+    auto records = consumer->poll(std::chrono::milliseconds(timeoutms));
     return results;
 }
 
-
+/// @brief Receive a filtered list of subscribed topics (to be retired)
+/// @param topic 
+/// @param timeoutms 
+/// @return 
 queue<string> KafkaDriver::receive(const string& topic, int timeoutms) 
 {
     // Automatically Subscribe to topics
