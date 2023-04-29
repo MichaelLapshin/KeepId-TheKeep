@@ -14,9 +14,6 @@
 #include "TaskLogic.hpp"
 #include "MessageClient.hpp"
 
-#include "comms/KafkaDriver.hpp"
-#include "comms/CassandraDriver.hpp"
-
 using namespace std;
 using namespace thekeep;
 
@@ -39,15 +36,16 @@ void workLoop(const atomic<bool> &loop_thread)
 {
     try
     {
-        // TODO: move initialization logic to MessageClient
-        vector<string> topics{"keepid-tests"};
         // vector<string> topics{KAFKA_CONTROL_TOPIC, KAFKA_DATA_TOPIC};
-        KafkaDriver *kd = new KafkaDriver(KAFKA_URL, topics);
-        TheKeepMessaging *km = kd;
-        TheKeepDB *kdb = new CassandraDriver();
-        kdb->connect(CASSANRDA_URL, CASSANRDA_USER, CASSANRDA_PASSWORD);
+        // KafkaDriver *kd = new KafkaDriver(KAFKA_URL, topics);
+        // TheKeepMessaging *km = kd;
+        // TheKeepDB *kdb = new CassandraDriver();
+        // kdb->connect(CASSANRDA_URL, CASSANRDA_USER, CASSANRDA_PASSWORD);
+        // thekeep::MessageClient *messageClient = new thekeep::MessageClient(km, kdb);
 
-        thekeep::MessageClient *messageClient = new thekeep::MessageClient(km, kdb);
+        // DONE: moved initialization logic to MessageClient
+        vector<string> topics{"keepid-tests"};
+        thekeep::MessageClient *messageClient = new thekeep::MessageClient(topics);
         messageClient->send();
 
         while (loop_thread)

@@ -24,7 +24,7 @@ using namespace thekeep;
 KafkaDriver::KafkaDriver(const string& kafka_server, const vector<string>& topics)
 {
     initialize(kafka_server);
-    ranges::for_each(topics,[&](const string& topic) { subscribe(topic); }); // C++20
+    ranges::for_each(topics,[&](auto topic) { subscribe(topic); }); // C++20
 //alt:   for(auto topic:topics) { subscribe(topic); } // C++17
 }
 
@@ -48,6 +48,8 @@ void KafkaDriver::initialize(const string& kafka_server)
     consumer = make_unique<clients::consumer::KafkaConsumer>(props); 
 }
 
+/// @brief Subscribes to a single topic
+/// @param topic - a string name of a topic
 void KafkaDriver::subscribe(const string& topic)
 {
     // Check if already subscribed; if now - subscribe
@@ -57,7 +59,7 @@ void KafkaDriver::subscribe(const string& topic)
 }
 
 /// @brief Subscribes to multiple topics
-/// @param topics 
+/// @param topics - a string set of topics
 void KafkaDriver::subscribe(const set<string>& topics) 
 {
     const Topics& newtopics(topics); // type conversion; it's identical now
@@ -108,7 +110,6 @@ queue<string> KafkaDriver::receive(int timeoutms)
 {
     // Automatically Subscribe to topics
     // must be explicit   subscribe(topic); // Check if already subscribed; if now - subscribe
-
     queue<string> results;
 
     auto records = consumer->poll(std::chrono::milliseconds(timeoutms));
