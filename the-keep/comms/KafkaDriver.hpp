@@ -12,14 +12,13 @@
 
 #include "TheKeepMessaging.hpp"
 
-using namespace std;
-
 namespace thekeep {
+    using namespace std;
 
-    // generic Messaging interface for The Keep; per subscription/topic
+    /// @brief generic Messaging interface for The Keep; an instance per subscription/topic
     class KafkaDriver : public TheKeepMessaging {
-            unique_ptr<kafka::clients::KafkaProducer> producer;
-            unique_ptr<kafka::clients::KafkaConsumer> consumer;
+            unique_ptr<kafka::clients::producer::KafkaProducer> producer;
+            unique_ptr<kafka::clients::consumer::KafkaConsumer> consumer;
             mutex      kafka_mutex;  // for error preservation
             kafka::Error lasterror; // Kafka last error; naive approach for now: clean after read
         public:
@@ -31,7 +30,8 @@ namespace thekeep {
             virtual void subscribe(const set<string>& topics);        
             virtual void unsubscribe(const string& topic);        
             virtual int send(const string& topic, const string& message);
-            virtual queue<string> receive(const string& topic, int timeoutms);
+            virtual queue<string> receive(int timeoutms=1000); // defailt - 1s
+            virtual queue<string> receive(const string& topic, int timeoutms); // to retire; filtering version
             virtual string last_error(); // reads and cleans the last error        
     };
 

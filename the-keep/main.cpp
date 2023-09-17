@@ -1,4 +1,9 @@
-
+/**
+ * @filename: main.cpp
+ * @description: The main of the Keep
+ * @author: KeepId  {ML,IL}
+ * @date: Feb 2, 2022
+ */
 #include <string>
 #include <cstdlib>
 #include <iostream>
@@ -9,6 +14,7 @@
 #include <thread>
 #include <chrono>
 
+#include "core/Logger.hpp"
 #include "core/key-manager/KeyManager.hpp"
 #include "core/task-manager/TaskManager.hpp"
 #include "core/data-fields/Config.hpp"
@@ -21,17 +27,20 @@
 using namespace std;
 using namespace thekeep;
 
+
 int main(int argc, char *argv[]){
     // Starts the Keep
-    cout << "Initializing the Keep... ";
+    spdlog::info("Initializing the Keep... ");  // to Console
     KeyManager::initializeKeepKeys();
     Config::initialize();
-    cout << "Done." << endl;
+    KeepLogger::initialize();
+    spdlog::info("SpdLog: TheKeep initialization has done.");
 
-    TaskManager worker{};
+    DEBUG("test of the debug logger macro");
+    KeepLogger::flash();
 
     // Development test --- TODO: remove this
-/*
+/* * /
     unique_ptr<TheKeepMessaging> kd = make_unique<KafkaDriver>();
     kd->initialize("");
     kd->subscribe("keepid-tests");
@@ -44,23 +53,36 @@ int main(int argc, char *argv[]){
         messages = kd->receive("keepid-tests",100);
         while(!messages.empty())
         {
-               cout << "tick: " + to_string(i) +  " -> " + messages.front() << endl;        
+               DEBUG("tick: " + to_string(i) +  " -> " + messages.front());        
                messages.pop();
         }
     }
-
+/ * */
     TheKeepDB *db = new CassandraDriver();
     db->connect(CASSANRDA_URL,"cassandra","cassandra");
     TheKeepRecord data = db->get(123,23);
-    cout << "test: ";
-    cout << data.userid << " - " << data.fieldid << ": " << data.chip << std::endl;
+    DEBUG("test: ");
+    DEBUG(data.userid << " - " << data.fieldid << ": " << data.chip);
     delete db;
-*/
+    KeepLogger::flash();
+// * /
+
+// Non-threading task testing
+
+
+
+
+
+
+
+
+    TaskManager worker{};
 
     // Starts the command line interface
     bool is_running = true;
     while(is_running){
-        // Parses the a
+        // Parses the command
+        cout << "Server status: " << (worker.isRunning()? "running":"stopped") << " Enter the command: ";
         string input; 
         cin >> input;
 
@@ -78,7 +100,7 @@ int main(int argc, char *argv[]){
             if (!worker.isRunning()){
                 is_running = false;
             }else{
-                cerr << "The Keep must be stopped. Enter 'stop' to stop the Keep." << endl;
+                spdlog::error("The Keep must be stopped. Enter 'stop' to stop the Keep.");
             }
         }else{
             cerr << "Invalid command. Enter '--help' for command instructions." << endl;
@@ -86,9 +108,9 @@ int main(int argc, char *argv[]){
     }
 
     // Stops the Keep
-    cout << "Uninitializing the Keep... ";
+    LOG("Uninitializing the Keep... ");
     Config::uninitialize();
-    cout << "Done." << endl;
-    cout << "Exiting the program..." << endl;
+    LOG("Uninitialization Has Done.");
+    LOG("Exiting the program...");
     return 0;
 }

@@ -10,7 +10,7 @@
 #include <string>
 #include <memory>
 
-#include "core/cryptography-wrappers/CryptoWrapper.hpp"
+#include "core/cryptography-wrappers/CryptoWrapper.hpp"  // TODO: redundant - included in next header; however, may be needed later for "factorys"
 #include "core/cryptography-wrappers/CryptoWrapper_Cryptopp.hpp"
 
 using namespace std;

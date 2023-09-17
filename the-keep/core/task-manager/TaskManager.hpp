@@ -49,5 +49,5 @@ class TaskManager {
         // Variables
         bool is_running = false;
         atomic<bool> loop_thread; // flag for running the Keep main loop
-        thread *thread_obj;
+        thread *thread_obj;  // TODO; change to unique_ptr
 };

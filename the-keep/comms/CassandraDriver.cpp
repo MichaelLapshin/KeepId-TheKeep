@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <cassandra.h>
 
+#include "core/Logger.hpp"
 #include "CommsConfig.hpp"
 #include "CassandraDriver.hpp"
 using namespace thekeep;
@@ -9,8 +10,7 @@ using namespace thekeep;
 
 int CassandraDriver::connect(const string &ip, const string &user, const string &pwd)
 {
-  /* Setup and connect to Cassandra cluster */
-  //connect_future = NULL;        // CassFuture*
+  /* Setup and connect to Cassandra cluster */     
   cluster = cass_cluster_new();   // CassCluster*
   session = cass_session_new();   // CassSession*
   const char *hosts = ip.c_str(); // 
@@ -20,13 +20,12 @@ int CassandraDriver::connect(const string &ip, const string &user, const string 
   cass_cluster_set_credentials(cluster, user.c_str(), pwd.c_str()); 
 
   /* Provide the cluster object as configuration to connect the session */
-  connect_future = cass_session_connect(session, cluster);
+  connect_future = cass_session_connect(session, cluster); // CassFuture*
 
   // dup todo
   if (cass_future_error_code(connect_future) == CASS_OK)
   {
     CassFuture *close_future = NULL;
-
     //....
   }
   else
@@ -35,7 +34,8 @@ int CassandraDriver::connect(const string &ip, const string &user, const string 
     const char *message;
     size_t message_length;
     cass_future_error_message(connect_future, &message, &message_length);
-    fprintf(stderr, "KeepDB->Cassandra: Unable to connect: '%.*s'\n", (int)message_length, message);
+    ERROR("KeepDB->Cassandra: Unable to connect: {}", message);
+    std::cout << "err:" << message << endl;
   }
 
   return 0;
@@ -84,7 +84,7 @@ TheKeepRecord CassandraDriver::get(const long userid, const int fieldid)
         const char *chip;
         size_t chip_length;
         cass_value_get_string(cvChip, &chip, &chip_length);
-        printf("DEBUG: Encrypted data chip: '%.*s'\n", (int)chip_length, chip);
+        DEBUG("Encrypted data chip: {}",chip);
         result_field = string(chip);
         
         long usrid; 
@@ -111,7 +111,7 @@ TheKeepRecord CassandraDriver::get(const long userid, const int fieldid)
       const char *message;
       size_t message_length;
       cass_future_error_message(result_future, &message, &message_length);
-      fprintf(stderr, "KeepDB->Cassandra: Unable to run query: '%.*s'\n", (int)message_length, message);
+      ERROR("KeepDB->Cassandra: Unable to run query: {}", message);
     }
 
     cass_statement_free(statement);
@@ -129,7 +129,7 @@ TheKeepRecord CassandraDriver::get(const long userid, const int fieldid)
     size_t message_length;
     cass_future_error_message(connect_future, &message, &message_length);
     
-    fprintf(stderr, "KeepDB->Cassandra: Unable to connect: '%.*s'\n", (int)message_length, message);
+    ERROR("KeepDB->Cassandra: Unable to connect: {}", message); //'%.*s'\n (int)message_length, 
   }
 
   return record;

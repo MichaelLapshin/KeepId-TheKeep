@@ -4,11 +4,6 @@
  * @author: KeepId 
  * @date: March 6, 2022
  */
-
-#include <thread>
-#include <atomic>
-#include <assert.h>
-
 #include <jsoncpp/json/json.h>
 
 #include "core/HelperFunctions.hpp"
@@ -16,42 +11,82 @@
 #include "core/data-fields/Assertions.hpp"
 #include "core/data-fields/Constants.hpp"
 #include "core/data-fields/Config.hpp"
+#include "TaskLogic.hpp"
+#include "MessageClient.hpp"
 
 using namespace std;
+using namespace thekeep;
 
-// Function declaration
-void workLoop(const atomic<bool> &loop_thread);
-void userDataUpdateTask(const string& data_update_input);
-void userDataRequestTask(const string& data_request_input);
+thekeep::MessageClient* initialize() {
+
+    unique_ptr<TheKeepMessaging> kd = make_unique<thekeep::KafkaDriver>();
+    kd->initialize("");
+    kd->subscribe("keepid-tests");
+    kd->send("keepid-tests", "test-c++ 1235");
+    kd->send("keepid-tests", "test-c++ 123567");
+    return NULL;
+}
 
 /**
  * workLoop()
  * @brief The method that would be run whenever
  *        the task manager is started.
  */
-void workLoop(const atomic<bool> &loop_thread){
-    while(loop_thread){
-        /////////////////////////////////////////////
-        ///  Poll and execute user-data updating  ///
-        /////////////////////////////////////////////
-        try {
-            const string data_update_str_json; // = MessageClient.PollFetchDataUpdate() // Contains user_id, encrypted_data_fields
-            userDataUpdateTask(data_update_str_json);
-        } catch(const std::runtime_error& exception) {
-            // TODO: Log the exception
-            // TODO: Redact and propagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
-        }
+void workLoop(const atomic<bool> &loop_thread)
+{
+    try
+    {
+        // vector<string> topics{KAFKA_CONTROL_TOPIC, KAFKA_DATA_TOPIC};
+        // KafkaDriver *kd = new KafkaDriver(KAFKA_URL, topics);
+        // TheKeepMessaging *km = kd;
+        // TheKeepDB *kdb = new CassandraDriver();
+        // kdb->connect(CASSANRDA_URL, CASSANRDA_USER, CASSANRDA_PASSWORD);
+        // thekeep::MessageClient *messageClient = new thekeep::MessageClient(km, kdb);
 
-        /////////////////////////////////////////////
-        ///     Poll and execute data-request     ///
-        /////////////////////////////////////////////
-        try {
-            const string data_request_str_json; // = MessageClient.fetchUserDataRequest() // Contains user_id, request_id, private_keys, public_keys
-            userDataRequestTask(data_request_str_json);
-        } catch(const std::runtime_error& exception) {
-            // TODO: Log the exception.
-            // TODO: Redact and ropagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+        // DONE: moved initialization logic to MessageClient
+        vector<string> topics{"keepid-tests"};
+        thekeep::MessageClient *messageClient = new thekeep::MessageClient(topics);
+        messageClient->send();
+
+        while (loop_thread)
+        {
+            /////////////////////////////////////////////
+            ///  Poll and execute user-data updating  ///
+            /////////////////////////////////////////////
+            try
+            {
+                messageClient->send();
+                // TODO: test..
+                const string data_update_str_json = messageClient->pollFetchDataUpdate(); // Contains user_id, encrypted_data_fields
+
+                userDataUpdateTask(data_update_str_json);
+            }
+            catch (const std::runtime_error &exception)
+            {
+                ERROR("WorkLoop execute user-data updating exception: ", exception.what());
+                // TODO: Redact and propagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+            }
+
+            /////////////////////////////////////////////
+            ///     Poll and execute data-request     ///
+            /////////////////////////////////////////////
+            try
+            {
+                // TODO: test
+                const string data_request_str_json = messageClient->fetchUserDataRequest(); // Contains user_id, request_id, private_keys, public_keys
+                userDataRequestTask(data_request_str_json);
+            }
+            catch (const std::runtime_error &exception)
+            {
+                ERROR("WorkLoop execute data-request exception: ", exception.what());
+                // TODO: Redact and ropagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+            }
         }
+    }
+    catch (const std::runtime_error &exception)
+    {
+        // TODO: Redact and propagate the issue back to the user. -> TODO: Need custom error-class object for returning errors to the user.
+        ERROR("WorkLoop general exception: ", exception.what());
     }
 }
 

@@ -15,7 +15,8 @@ namespace thekeep
   using namespace std;
 
   // generic Messaging interface for THe Keep
-  class CassandraDriver : public TheKeepDB {
+  class CassandraDriver : public TheKeepDB 
+  {
       CassFuture* connect_future;
       CassCluster* cluster;
       CassSession* session;
@@ -32,9 +33,9 @@ namespace thekeep
 
       // additional layer??
       virtual TheKeepRecord getchip(const long userid, const int fieldid) 
-                      { return get(userid,fieldid); }
+                            { return get(userid,fieldid); }
       virtual void putchip(const long userid, const int fieldid, const string& value)
-                      { put(userid,fieldid,value); }
+                            { put(userid,fieldid,value); }
   };
 
 } // namespace thekeep

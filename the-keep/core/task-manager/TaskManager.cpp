@@ -5,18 +5,10 @@
  * @author: KeepId 
  * @date: February 19, 2022
  */
-
-#include <functional>
-#include <thread>
-#include <atomic>
-#include <assert.h>
-
-#include <jsoncpp/json/json.h>
+// ?? #include <functional>
 
 #include "TaskManager.hpp"
-#include "TaskLogic.cpp"
-#include "core/key-manager/KeyManager.hpp"
-#include "core/data-fields/Assertions.hpp"
+#include "TaskLogic.hpp"  
 
 using namespace std;
 
@@ -39,18 +31,23 @@ TaskManager::~TaskManager(){
  * TaskManager::start()
  */
 void TaskManager::start(){
-    loop_thread = true;
-    thread_obj = new thread(workLoop, ref(this->loop_thread));
-    is_running = true;
+    if (!is_running){  // guard
+        loop_thread = true;
+        thread_obj = new thread(workLoop, ref(this->loop_thread));
+        is_running = true;
+    }
 }
 
 /**
  * TaskManager::stop()
  */
 void TaskManager::stop(){
-    loop_thread = false;
-    thread_obj->join();
-    is_running = false;
+    if (is_running){ // guard
+        loop_thread = false;
+        thread_obj->join();
+        // TODO: Delete thread_obj, or change to unique_ptr<>
+        is_running = false;
+    }
 }
 
 /**

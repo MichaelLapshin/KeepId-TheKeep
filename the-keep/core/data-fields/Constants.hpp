@@ -10,6 +10,13 @@
 
 #include <string>
 
+// A Flat to indicate a Development run (for logging etc)
+const bool DEVELOPMENT = true;
+
+// Configuration file
+const std::string MAIN_CONFIG_FILE_NAME = "thekeep-config.json";
+const std::string LOG_FILE_NAME = "logs/thekeeplog.log";
+
 // Configurations constants
 const std::string DATA_FIELD_CONFIG_FILE_NAME = "data-fields-config.json";
 const std::string OPTION_LISTS = "option_lists";
